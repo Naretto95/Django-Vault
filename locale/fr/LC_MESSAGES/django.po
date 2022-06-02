@@ -1,0 +1,114 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-06-01 05:13+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: .\templates\Base.html:26 .\templates\Base.html:50
+msgid "Menu"
+msgstr ""
+
+#: .\templates\Base.html:29
+msgid "Connected as"
+msgstr "Connecté en tant que"
+
+#: .\templates\Base.html:32
+msgid "Home"
+msgstr "Index"
+
+#: .\templates\Base.html:36
+msgid "Admin Panel"
+msgstr ""
+
+#: .\templates\Base.html:74
+msgid "Search..."
+msgstr "Rechercher..."
+
+#: .\templates\Base.html:78
+msgid "Log Out"
+msgstr "Deconnexion"
+
+#: .\templates\Base.html:90 .\templates\Login.html:21
+#: .\templates\Registration.html:21
+msgid "Important"
+msgstr ""
+
+#: .\templates\Base.html:133
+msgid "Next"
+msgstr ""
+
+#: .\templates\Base.html:134
+msgid "Previous"
+msgstr ""
+
+#: .\templates\Base.html:136
+#, fuzzy
+#| msgid "Search..."
+msgid "Search:"
+msgstr "Rechercher..."
+
+#: .\templates\Base.html:137
+msgid "Display"
+msgstr ""
+
+#: .\templates\Base.html:137
+msgid "records per page"
+msgstr ""
+
+#: .\templates\Base.html:138
+msgid "Nothing found - sorry"
+msgstr ""
+
+#: .\templates\Base.html:139
+msgid "Showing page"
+msgstr ""
+
+#: .\templates\Base.html:139
+msgid "of"
+msgstr ""
+
+#: .\templates\Base.html:140
+msgid "No records available"
+msgstr ""
+
+#: .\templates\Base.html:141
+msgid "filtered from"
+msgstr ""
+
+#: .\templates\Base.html:141
+msgid "records"
+msgstr ""
+
+#: .\templates\Login.html:29 .\templates\Login.html:34
+msgid "Login"
+msgstr "Connexion"
+
+#: .\templates\Login.html:37
+msgid "Don't have an account? Register"
+msgstr "Pas de compte? Inscription"
+
+#: .\templates\Login.html:37
+msgid "here"
+msgstr "ici"
+
+#: .\templates\Registration.html:29
+msgid "Registration"
+msgstr "Inscription"
+
+#: .\templates\Registration.html:34
+msgid "Register"
+msgstr "S'inscrire"

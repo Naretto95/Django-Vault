@@ -1,0 +1,101 @@
+{% extends "Base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h2>{% trans "Hello" %}, {{request.user}}</h2>
+<hr>
+<br>
+<div class="row justify-content-center">
+    <div class=" col-lg">
+        <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
+            <div class="card-header text-center">{% trans "Groups"%}</div>
+            <div class="card-body text-center">
+                {% if request.user.extension.groups %}
+                <h5 class="card-title">{{request.user.extension.groups.count}}</h5>
+                {%else%}
+                <h5 class="card-title">0</h5>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class=" col-lg">
+        <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+            <div class="card-header text-center">{% trans "Assets"%}</div>
+            <div class="card-body text-center">
+                {% if assets %}
+                <h5 class="card-title">{{assets.count}}</h5>
+                {%else%}
+                <h5 class="card-title">0</h5>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class=" col-lg">
+      <div class="card text-white bg-warning mb-3" style="max-width: 18rem;">
+          <div class="card-header text-center">{% trans "Softwares"%}</div>
+          <div class="card-body text-center">
+            {% if softwares %}
+            <h5 class="card-title">{{softwares.count}}</h5>
+            {%else%}
+            <h5 class="card-title">0</h5>
+            {% endif %}
+          </div>
+      </div>
+  </div>
+    <div class=" col-lg">
+        <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+            <div class="card-header text-center">{% trans "Vulnerabilities"%}</div>
+            <div class="card-body text-center">
+              {% if vulnerabilities %}
+              <h5 class="card-title">{{vulnerabilities.count}}</h5>
+              {%else%}
+              <h5 class="card-title">0</h5>
+              {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<h3>{% trans "Latest objects"%}</h3>
+<hr>
+<br>
+<table aria-label="table objects" class="table table-striped table-bordered">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">{% trans "name"%}</th>
+        <th scope="col">{% trans "type"%}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% if request.user.extension.groups %}
+    <tr>
+        <td>{{request.user.extension.groups.last.pk}}</td>
+        <td class="link"><a href="">{{request.user.extension.groups.last}}</a></td>
+        <td>{% trans "Group"%}</td>
+    </tr>
+    {% endif%}
+    {% if assets %}
+    <tr>
+        <td>{{assets.last.pk}}</td>
+        <td class="link"><a href="">{{assets.last}}</a></td>
+        <td>{% trans "Asset"%}</td>
+    </tr>
+    {% endif%}
+    {% if softwares %}
+    <tr>
+        <td>{{softwares.last.pk}}</td>
+        <td class="link"><a href="">{{softwares.last}}</a></td>
+        <td>{% trans "Software"%}</td>
+    </tr>
+    {% endif%}
+    {% if vulnerabilities%}
+    <tr>
+        <td>{{vulnerabilities.last.pk}}</td>
+        <td class="link"><a href="">{{vulnerabilities.last}}</a></td>
+        <td>{% trans "Vulnerability"%}</td>
+    </tr>
+    {% endif%}
+    </tbody>
+</table>
+{% endblock %}

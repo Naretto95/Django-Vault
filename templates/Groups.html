@@ -1,0 +1,61 @@
+{% extends "Base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div id="groupmodal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title">{% trans "Add Group" %}</h4>
+              <button type="button" class="close" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <form method="POST" >
+                  <div class="form-group">
+                      {% csrf_token %}
+                      {{groupform|crispy}}
+                  </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+              <button type="submit" class="btn btn-primary" name="groupform">{% trans "Add" %}</button>
+              </form>
+          </div>
+      </div>
+
+  </div>
+</div>
+<h3>{% trans "Groups" %}</h3>
+<br>
+<form method="POST" >
+  {% csrf_token %}
+  <button type="button" class="formbutton btn btn-primary" data-toggle="modal" data-target="#groupmodal">+ {% trans "Add" %}</button>
+  <button type="submit" class="formbutton btn btn-danger" name="deletegroup" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
+  <table class="table display table-striped table-bordered">
+      <thead>
+        <tr>
+          <th scope="col"></th>
+          {% if request.user.is_staff %}
+          <th scope="col">#</th>
+          {% endif %}
+          <th scope="col">{% trans "name" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for group in request.user.extension.groups.all%}
+        <tr>
+          <td style="text-align:center"><input name="groupcheck" value="{{group.pk}}" type="checkbox"></td>
+          {% if request.user.is_staff %}
+          <td>{{group.pk}}</td>
+          {% endif %}
+          <td class="link"><a href="">{{group}}</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</form>
+{% endblock %}

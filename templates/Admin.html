@@ -1,0 +1,22 @@
+{% extends 'Base.html' %}
+{% load i18n %}
+{% block content %}
+<div style="display: flex;
+justify-content: center;" >
+<div class="card" style="width: 18rem;margin-right: 20px;">
+    <div class="card-body">
+        <h5 class="card-title">{% trans "Django Admin Panel" %}</h5>
+        <p class="card-text">{% trans "Manage models, tokens, user credentials and many more options related to django." %}</p>
+        <a href="{% url 'admin:index'%}" class="btn btn-primary">{% trans "Go There" %}</a>
+    </div>
+</div>
+
+<div class="card" style="width: 18rem;">
+    <div class="card-body">
+        <h5 class="card-title">{% trans "Database Backups" %}</h5>
+        <p class="card-text">{% trans "Monitor the database backups. Options to create, delete or restore backups manually." %}</p>
+        <a href="" class="btn btn-primary">{% trans "Go There" %}</a>
+    </div>
+</div></div>
+<br>
+{% endblock %}
