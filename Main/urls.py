@@ -14,6 +14,7 @@ urlpatterns = [
     path('groups/<str:groupslug>/', views.GroupProfile.as_view(),name="groupprofile"),
     path('groups/<str:groupslug>/<str:assetslug>/', views.AssetProfile.as_view(),name="assetprofile"),
     path('groups/<str:groupslug>/<str:assetslug>/<str:softwareslug>/', views.SoftwareProfile.as_view(),name="softwareprofile"),
+    url(r'^cpe-autocomplete/$',views.CPEAutocomplete.as_view(),name='cpe-autocomplete',),
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^logout/$', LogoutView.as_view(), {'next_page': settings.LOGOUT_REDIRECT_URL}, name='logout'),
 ]

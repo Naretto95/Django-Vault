@@ -54,7 +54,7 @@
     </tr>
     </thead>
     <tbody>
-    {% if request.user.extension.groups %}
+    {% if request.user.extension.groups.last %}
     <tr>
         {% if request.user.is_staff %}
         <td>{{request.user.extension.groups.last.pk}}</td>

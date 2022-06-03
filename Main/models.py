@@ -79,7 +79,7 @@ class Group(TimeStampMixin):
         return Software.objects.filter(asset__in=self.assets.all())
     
     def getvulnerabilities(self):
-        return Vulnerability.filter(cpe__in=self.getsoftwares().values_list('cpe',flat=True))
+        return Vulnerability.objects.filter(cpe__in=self.getsoftwares().values_list('cpe',flat=True))
     
     def __str__(self):
         return self.name

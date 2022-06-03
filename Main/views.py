@@ -10,6 +10,14 @@ from django.contrib.auth.views import LoginView
 from django.views import View
 from django.utils.translation import gettext as _
 from django.shortcuts import redirect
+from dal import autocomplete
+
+class CPEAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = CPE.objects.all()
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+        return qs
 
 class Login(LoginView):
     template_name = 'Login.html'

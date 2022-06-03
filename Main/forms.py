@@ -1,11 +1,12 @@
 from django import forms
 from .models import *
+from dal import autocomplete
 
 class SoftwareForm(forms.ModelForm):
     class Meta:
         model = Software
         fields = ['name','description','version','asset','cpe']
-        widgets = {'description': forms.TextInput(attrs={'size': 20})}
+        widgets = {'description': forms.TextInput(attrs={'size': 20}),'cpe': autocomplete.ModelSelect2(url='cpe-autocomplete')}
 
     def __init__(self,*args,**kwargs):
         group = kwargs.pop('group', None)
