@@ -58,7 +58,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for vulnerability in software.vulnerabilities.all %}
+        {% for vulnerability in software.getvulnerabilities %}
         <tr>
         {% if request.user.is_staff %}
         <td>{{software.pk}}</td>

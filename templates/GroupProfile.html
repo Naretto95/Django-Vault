@@ -219,17 +219,17 @@
                 <th scope="col">#</th>
                 {% endif %}
                 <th scope="col">{% trans "name" %}</th>
-                <th scope="col">{% trans "software" %}</th>
+                <th scope="col">{% trans "CPE" %}</th>
                 </tr>
             </thead>
             <tbody>
                 {% for vulnerability in group.getvulnerabilities %}
                 <tr>
                 {% if request.user.is_staff %}
-                <td>{{software.pk}}</td>
+                <td>{{vulnerability.pk}}</td>
                 {% endif %}
                 <td class="link"><a href="">{{vulnerability}}</a></td>
-                <td class="link"><a href="{% url 'softwareprofile' groupslug=vulnerability.software.asset.group.slug assetslug=vulnerability.software.asset.slug softwareslug=vulnerability.software.slug %}">{{vulnerability.software}}</a></td>
+                <td class="link">{{vulnerability.cpe}}</td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -30,11 +30,7 @@ class Home(LoginRequiredMixin, View):
     template_name='Home.html'
 
     def get(self, request):
-        groups = request.user.extension.groups.all()
-        assets = Asset.objects.filter(group__in=groups)
-        softwares = Software.objects.filter(asset__in=assets)
-        vulnerabilities = Vulnerability.objects.filter(software__in=softwares)
-        data = {'homenav' : True,'available_languages': ['en', 'fr'],'vulnerabilities': vulnerabilities,'assets': assets,'softwares': softwares,'groups': groups}
+        data = {'homenav' : True,'available_languages': ['en', 'fr']}
         return render(request, self.template_name, data)
 
 class Groups(LoginRequiredMixin, View):

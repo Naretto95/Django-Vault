@@ -4,13 +4,7 @@ from .models import *
 class SoftwareForm(forms.ModelForm):
     class Meta:
         model = Software
-        fields = ['name','description','version']
-        widgets = {'description': forms.TextInput(attrs={'size': 20})}
-
-class SoftwareForm(forms.ModelForm):
-    class Meta:
-        model = Software
-        fields = ['name','description','version','asset']
+        fields = ['name','description','version','asset','cpe']
         widgets = {'description': forms.TextInput(attrs={'size': 20})}
 
     def __init__(self,*args,**kwargs):

@@ -15,26 +15,37 @@ class TimeStampMixin(models.Model):
 class Vulnerability(TimeStampMixin):
     name = models.CharField(max_length=100,verbose_name=_('Name'))
     description = models.TextField(verbose_name=_('Description'))
-    software = models.ForeignKey('Software', on_delete=models.CASCADE,verbose_name=_('Software'), related_name='+')
-    slug = AutoSlugField(_('Slug'), unique=True, max_length=100, populate_from=('name','version','asset'))
+    cpe = models.ForeignKey('CPE', on_delete=models.CASCADE,verbose_name=_('CPE'), related_name='+')
+    slug = AutoSlugField(_('Slug'), unique=True, max_length=100, populate_from=('name','cpe'))
 
     def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
         super(Vulnerability,self).save(*args, **kwargs)
-        self.software.vulnerabilities.add(self)
+        self.cpe.vulnerabilities.add(self)
+
+class CPE(TimeStampMixin):
+    name = models.CharField(max_length=100, verbose_name=_('Name'))
+    reference = models.TextField(verbose_name=_('Reference'))
+    vulnerabilities = models.ManyToManyField(Vulnerability, blank=True, verbose_name=_('Vulnerabilities'), related_name='+')
+
+    def __str__(self):
+        return self.name
 
 class Software(TimeStampMixin):
     name = models.CharField(max_length=100,verbose_name=_('Name'))
     description = models.TextField(verbose_name=_('Description'))
     version = models.CharField(max_length=100,verbose_name=_('Version'))
-    vulnerabilities = models.ManyToManyField(Vulnerability, blank=True, verbose_name=_('Vulnerabilities'), related_name='+')
+    cpe = models.ForeignKey('CPE', blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_('CPE'))
     asset = models.ForeignKey('Asset', on_delete=models.CASCADE,verbose_name=_('Asset'), related_name='+')
     slug = AutoSlugField(_('Slug'), unique=True, max_length=100, populate_from=('name','version','asset'))
 
     def __str__(self):
         return self.name
+
+    def getvulnerabilities(self):
+        return self.cpe.vulnerabilities.all()
 
     def save(self, *args, **kwargs):
         super(Software,self).save(*args, **kwargs)
@@ -48,7 +59,7 @@ class Asset(TimeStampMixin):
     slug = AutoSlugField(_('Slug'), unique=True, max_length=100, populate_from=('name','group'))
 
     def getvulnerabilities(self):
-        return Vulnerability.objects.filter(software__in=self.softwares.all())
+        return Vulnerability.objects.filter(cpe__in=self.softwares.values_list('cpe',flat=True))
 
     def __str__(self):
         return self.name
@@ -68,8 +79,8 @@ class Group(TimeStampMixin):
         return Software.objects.filter(asset__in=self.assets.all())
     
     def getvulnerabilities(self):
-        return Vulnerability.objects.filter(software__in=self.getsoftwares())
-
+        return Vulnerability.filter(cpe__in=self.getsoftwares().values_list('cpe',flat=True))
+    
     def __str__(self):
         return self.name
 
@@ -97,7 +108,7 @@ class Extension(models.Model):
         return Software.objects.filter(asset__in=self.getassets())
     
     def getvulnerabilities(self):
-        return Vulnerability.objects.filter(software__in=self.getsoftwares())
+        return Vulnerability.objects.filter(cpe__in=self.getsoftwares().values_list('cpe',flat=True))
 
     def __str__(self):
         return self.user.username
