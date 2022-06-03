@@ -1,0 +1,72 @@
+{% extends "Base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div id="softwaremodal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+  
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{% trans "Add Software" %}</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" >
+                    <div class="form-group">
+                        {% csrf_token %}
+                        {{softwareform|crispy}}
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                <button type="submit" class="btn btn-primary" name="softwareform">{% trans "Add" %}</button>
+                </form>
+            </div>
+        </div>
+  
+    </div>
+</div>
+<a class ="link" href="{% url 'groups' %}">Groups</a> > <a class ="link" href="{% url 'groupprofile' groupslug=software.asset.group.slug %}">{{software.asset.group}}</a> > <a class ="link" href="{% url 'assetprofile' groupslug=software.asset.group.slug assetslug=software.asset.slug %}">{{software.asset}}</a> > {{software}}
+<br>
+<br>
+<h2>{{software}}</h2>
+<form method="POST" >
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger" name="deletesoftware" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
+    <button type="button" class="btn btn-warning" style="color:white" data-toggle="modal" data-target="#softwaremodal">{% trans "Edit" %}</button>
+</form>
+<br>
+<details>
+    <summary>{% trans "Details" %}</summary>
+    {% trans "Description" %} : {{software.description}}<br>
+</details>
+<br>
+<hr>
+<br>
+<h3>{% trans "Vulnerabilities" %}</h3>
+<br>
+<form method="POST" >
+{% csrf_token %}
+<table class="table display table-striped table-bordered">
+    <thead>
+        <tr>
+        {% if request.user.is_staff %}
+        <th scope="col">#</th>
+        {% endif %}
+        <th scope="col">{% trans "name" %}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for vulnerability in software.vulnerabilities.all %}
+        <tr>
+        {% if request.user.is_staff %}
+        <td>{{software.pk}}</td>
+        {% endif %}
+        <td class="link"><a href="">{{vulnerability}}</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+</form>
+{% endblock %}

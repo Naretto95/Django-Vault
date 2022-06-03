@@ -32,7 +32,7 @@
                         <a href="{% url 'home'%}">{% trans "Home" %}</a>
                     </li>
                     <li {% if groupnav %} class="active" {%endif%}>
-                        <a href="{% url 'groups'%}">{% trans "Groups" %}</a>
+                        <a href="{% url 'groups'%}">{% trans "Groups & Assets" %}</a>
                     </li>
                     {% if request.user.is_staff %}
                     <li {% if adminnav %} class="active" {%endif%}>
@@ -125,6 +125,9 @@
             $(document).ready(function() {
         $('table.display').DataTable({
         dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ],
         "bPaginate": true,
         "bLengthChange": true,
         "bFilter": true,
@@ -142,55 +145,8 @@
                 "infoEmpty": "{% trans 'No records available' %}",
                 "infoFiltered": "({% trans 'filtered from' %} _MAX_ total {% trans 'records' %})"
          },
-          buttons: [
-                    {
-                        extend: 'print',
-                        text: 'Print',
-                        action: serverSideButtonAction
-                    },
-                    {
-                        extend: 'copy',
-                        text: 'Copy',
-                        action: serverSideButtonAction
-                    },
-                    {
-                        extend: 'excel',
-                        text: 'Excel',
-                        action: serverSideButtonAction
-                    },
-                    {
-                        extend: 'pdf',
-                        text: 'pdf',
-                        action: serverSideButtonAction
-                    }
-                ],
          });
-    
-         function serverSideButtonAction(e, dt, node, config) {
-    
-            var me = this;
-            var button = config.text.toLowerCase();
-            if (typeof $.fn.dataTable.ext.buttons[button] === "function") {
-                button = $.fn.dataTable.ext.buttons[button]();
-            }
-            var len = dt.page.len();
-            var start = dt.page();
-            dt.page(0);
-    
-            dt.context[0].aoDrawCallback.push({
-                "sName": "ssb",
-                "fn": function () {
-                    $.fn.dataTable.ext.buttons[button].action.call(me, e, dt, node, config);
-                    dt.context[0].aoDrawCallback = dt.context[0].aoDrawCallback.filter(function (e) { return e.sName !== "ssb" });
-                }
-            });
-            dt.page.len(999999999).draw();
-            setTimeout(function () {
-                dt.page(start);
-                dt.page.len(len).draw();
-            }, 500);
-        }
-    } );
+    });
         </script>
     </body>
 </html>

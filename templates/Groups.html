@@ -9,9 +9,7 @@
       <div class="modal-content">
           <div class="modal-header">
               <h4 class="modal-title">{% trans "Add Group" %}</h4>
-              <button type="button" class="close" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
           </div>
           <div class="modal-body">
               <form method="POST" >
@@ -29,33 +27,109 @@
 
   </div>
 </div>
-<h3>{% trans "Groups" %}</h3>
-<br>
-<form method="POST" >
-  {% csrf_token %}
-  <button type="button" class="formbutton btn btn-primary" data-toggle="modal" data-target="#groupmodal">+ {% trans "Add" %}</button>
-  <button type="submit" class="formbutton btn btn-danger" name="deletegroup" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
-  <table class="table display table-striped table-bordered">
-      <thead>
-        <tr>
-          <th scope="col"></th>
-          {% if request.user.is_staff %}
-          <th scope="col">#</th>
-          {% endif %}
-          <th scope="col">{% trans "name" %}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for group in request.user.extension.groups.all%}
-        <tr>
-          <td style="text-align:center"><input name="groupcheck" value="{{group.pk}}" type="checkbox"></td>
-          {% if request.user.is_staff %}
-          <td>{{group.pk}}</td>
-          {% endif %}
-          <td class="link"><a href="">{{group}}</a></td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-</form>
+<div id="assetmodal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+  
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{% trans "Add Asset" %}</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" >
+                    <div class="form-group">
+                        {% csrf_token %}
+                        {{assetform|crispy}}
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                <button type="submit" class="btn btn-primary" name="assetform">{% trans "Add" %}</button>
+                </form>
+            </div>
+        </div>
+  
+    </div>
+</div>
+
+<ul class="nav nav-tabs">
+  <li><a data-toggle="tab"  href="#groups" class="nav-link active" role="tab">{% trans "Groups" %}</a></li>
+  <li><a data-toggle="tab" href="#assets" class="nav-link" role="tab">{% trans "Assets" %}</a></li>
+</ul>
+
+<div class="tab-content">
+  <div id="groups" class="tab-pane active">
+    <br>
+    <h3>{% trans "Groups" %}</h3>
+    <br>
+    <form method="POST" >
+      {% csrf_token %}
+      <button type="button" class="formbutton btn btn-primary" data-toggle="modal" data-target="#groupmodal">+ {% trans "Add" %}</button>
+      <button type="submit" class="formbutton btn btn-danger" name="deletegroup" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
+      <table class="table display table-striped table-bordered">
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              {% if request.user.is_staff %}
+              <th scope="col">#</th>
+              {% endif %}
+              <th scope="col">{% trans "name" %}</th>
+              <th scope="col">{% trans "assets" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for group in request.user.extension.groups.all %}
+            <tr>
+              <td style="text-align:center"><input name="groupcheck" value="{{group.pk}}" type="checkbox"></td>
+              {% if request.user.is_staff %}
+              <td>{{group.pk}}</td>
+              {% endif %}
+              <td class="link"><a href="{% url 'groupprofile' groupslug=group.slug %}">{{group}}</a></td>
+              <td>{{group.assets.count}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </form>
+  </div>
+  <div id="assets" class="tab-pane">
+    <br>
+    <h3>{% trans "Assets" %}</h3>
+    <br>
+    <form method="POST" >
+      {% csrf_token %}
+      <button type="button" class="formbutton btn btn-primary" data-toggle="modal" data-target="#assetmodal">+ {% trans "Add" %}</button>
+      <button type="submit" class="formbutton btn btn-danger" name="deleteasset" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
+      <table class="table display table-striped table-bordered">
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              {% if request.user.is_staff %}
+              <th scope="col">#</th>
+              {% endif %}
+              <th scope="col">{% trans "name" %}</th>
+              <th scope="col">{% trans "group" %}</th>
+              <th scope="col">{% trans "softwares" %}</th>
+              <th scope="col">{% trans "vulnerabilities" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for asset in request.user.extension.getassets %}
+            <tr>
+              <td style="text-align:center"><input name="assetcheck" value="{{asset.pk}}" type="checkbox"></td>
+              {% if request.user.is_staff %}
+              <td>{{asset.pk}}</td>
+              {% endif %}
+              <td class="link"><a href="{% url 'assetprofile' groupslug=asset.group.slug assetslug=asset.slug %}">{{asset}}</a></td>
+              <td class="link"><a href="{% url 'groupprofile' groupslug=asset.group.slug %}">{{asset.group}}</a></td>
+              <td>{{asset.softwares.count}}</td>
+              <td>{{asset.getvulnerabilities.count}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </form>
+  </div>
+</div>
 {% endblock %}

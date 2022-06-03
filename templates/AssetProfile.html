@@ -1,0 +1,166 @@
+{% extends "Base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div id="assetmodal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+  
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{% trans "Edit Asset" %}</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" >
+                    <div class="form-group">
+                        {% csrf_token %}
+                        {{assetform|crispy}}
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                <button type="submit" class="btn btn-primary" name="assetform">{% trans "Add" %}</button>
+                </form>
+            </div>
+        </div>
+  
+    </div>
+</div>
+<div id="softwaremodal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+  
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{% trans "Add Software" %}</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" >
+                    <div class="form-group">
+                        {% csrf_token %}
+                        {{softwareform|crispy}}
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                <button type="submit" class="btn btn-primary" name="softwareform">{% trans "Add" %}</button>
+                </form>
+            </div>
+        </div>
+  
+    </div>
+</div>
+<a class ="link" href="{% url 'groups' %}">Groups</a> > <a class ="link" href="{% url 'groupprofile' groupslug=asset.group.slug %}">{{asset.group}}</a> > {{asset}} 
+<br>
+<br>
+<h2>{{asset}}</h2>
+<form method="POST" >
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger" name="deleteasset" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
+    <button type="button" class="btn btn-warning" style="color:white" data-toggle="modal" data-target="#assetmodal">{% trans "Edit" %}</button>
+</form>
+<br>
+<details>
+    <summary>{% trans "Details" %}</summary>
+    {% trans "Description" %} : {{asset.description}}<br>
+</details>
+<br>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg">
+            <div class="card text-white bg-warning mb-3" style="max-width: 18rem;">
+                <div class="card-header text-center">{% trans "Softwares" %}</div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">
+                        {{asset.softwares.count}}
+                    </h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg">
+            <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+                <div class="card-header text-center">{% trans "Vulnerabilities" %}</div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">
+                        {{asset.getvulnerabilities.count}}
+                    </h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<ul class="nav nav-tabs">
+    <li><a data-toggle="tab" href="#softwares" class="nav-link active" role="tab">{% trans "Softwares" %}</a></li>
+    <li><a data-toggle="tab" href="#vulnerabilities" class="nav-link" role="tab">{% trans "Vulnerabilities" %}</a></li>
+</ul>
+
+<div class="tab-content">
+    <div id="softwares" class="tab-pane active">
+        <br>
+        <h3>{% trans "Softwares" %}</h3>
+        <br>
+        <form method="POST" >
+        {% csrf_token %}
+        <button type="button" class="formbutton btn btn-primary" data-toggle="modal" data-target="#softwaremodal">+ {% trans "Add" %}</button>
+        <button type="submit" class="formbutton btn btn-danger" name="deletesoftware" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
+        <table class="table display table-striped table-bordered">
+            <thead>
+                <tr>
+                <th scope="col"></th>
+                {% if request.user.is_staff %}
+                <th scope="col">#</th>
+                {% endif %}
+                <th scope="col">{% trans "name" %}</th>
+                <th scope="col">{% trans "vulnerabilities" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for software in asset.softwares.all %}
+                <tr>
+                <td style="text-align:center"><input name="softwarecheck" value="{{software.pk}}" type="checkbox"></td>
+                {% if request.user.is_staff %}
+                <td>{{software.pk}}</td>
+                {% endif %}
+                <td class="link"><a href="{% url 'softwareprofile' groupslug=software.asset.group.slug assetslug=software.asset.slug softwareslug=software.slug %}">{{software}}</a></td>
+                <td>{{software.vulnerabilities.count}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </form>
+    </div>
+    <div id="vulnerabilities" class="tab-pane">
+        <br>
+        <h3>{% trans "Vulnerabilities" %}</h3>
+        <br>
+        <form method="POST" >
+        {% csrf_token %}
+        <table class="table display table-striped table-bordered">
+            <thead>
+                <tr>
+                {% if request.user.is_staff %}
+                <th scope="col">#</th>
+                {% endif %}
+                <th scope="col">{% trans "name" %}</th>
+                <th scope="col">{% trans "software" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vulnerability in asset.getvulnerabilities %}
+                <tr>
+                {% if request.user.is_staff %}
+                <td>{{software.pk}}</td>
+                {% endif %}
+                <td class="link"><a href="">{{vulnerability}}</a></td>
+                <td class="link"><a href="{% url 'softwareprofile' groupslug=vulnerability.software.asset.group.slug assetslug=vulnerability.software.asset.slug softwareslug=vulnerability.software.slug %}">{{vulnerability.software}}</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+{% endblock %}

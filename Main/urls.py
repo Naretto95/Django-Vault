@@ -11,6 +11,9 @@ urlpatterns = [
     path('search/', views.Login.as_view(redirect_authenticated_user=True),name="search"),
     path('adminpanel/', views.AdminPanel.as_view(),name="adminpanel"),
     path('signup/', views.SignUp.as_view(),name="signup"),
+    path('groups/<str:groupslug>/', views.GroupProfile.as_view(),name="groupprofile"),
+    path('groups/<str:groupslug>/<str:assetslug>/', views.AssetProfile.as_view(),name="assetprofile"),
+    path('groups/<str:groupslug>/<str:assetslug>/<str:softwareslug>/', views.SoftwareProfile.as_view(),name="softwareprofile"),
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^logout/$', LogoutView.as_view(), {'next_page': settings.LOGOUT_REDIRECT_URL}, name='logout'),
 ]

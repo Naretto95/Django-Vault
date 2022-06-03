@@ -10,11 +10,7 @@
         <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
             <div class="card-header text-center">{% trans "Groups"%}</div>
             <div class="card-body text-center">
-                {% if request.user.extension.groups %}
                 <h5 class="card-title">{{request.user.extension.groups.count}}</h5>
-                {%else%}
-                <h5 class="card-title">0</h5>
-                {% endif %}
             </div>
         </div>
     </div>
@@ -22,11 +18,7 @@
         <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
             <div class="card-header text-center">{% trans "Assets"%}</div>
             <div class="card-body text-center">
-                {% if assets %}
-                <h5 class="card-title">{{assets.count}}</h5>
-                {%else%}
-                <h5 class="card-title">0</h5>
-                {% endif %}
+                <h5 class="card-title">{{request.user.extension.getassets.count}}</h5>
             </div>
         </div>
     </div>
@@ -34,11 +26,7 @@
       <div class="card text-white bg-warning mb-3" style="max-width: 18rem;">
           <div class="card-header text-center">{% trans "Softwares"%}</div>
           <div class="card-body text-center">
-            {% if softwares %}
-            <h5 class="card-title">{{softwares.count}}</h5>
-            {%else%}
-            <h5 class="card-title">0</h5>
-            {% endif %}
+            <h5 class="card-title">{{request.user.extension.getsoftwares.count}}</h5>
           </div>
       </div>
   </div>
@@ -46,11 +34,7 @@
         <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
             <div class="card-header text-center">{% trans "Vulnerabilities"%}</div>
             <div class="card-body text-center">
-              {% if vulnerabilities %}
-              <h5 class="card-title">{{vulnerabilities.count}}</h5>
-              {%else%}
-              <h5 class="card-title">0</h5>
-              {% endif %}
+              <h5 class="card-title">{{request.user.extension.getvulnerabilities.count}}</h5>
             </div>
         </div>
     </div>
@@ -62,7 +46,9 @@
 <table aria-label="table objects" class="table table-striped table-bordered">
     <thead>
     <tr>
+        {% if request.user.is_staff %}
         <th scope="col">#</th>
+        {% endif %}
         <th scope="col">{% trans "name"%}</th>
         <th scope="col">{% trans "type"%}</th>
     </tr>
@@ -70,29 +56,37 @@
     <tbody>
     {% if request.user.extension.groups %}
     <tr>
+        {% if request.user.is_staff %}
         <td>{{request.user.extension.groups.last.pk}}</td>
-        <td class="link"><a href="">{{request.user.extension.groups.last}}</a></td>
+        {% endif %}
+        <td class="link"><a href="{% url 'groupprofile' groupslug=request.user.extension.groups.last.slug %}">{{request.user.extension.groups.last}}</a></td>
         <td>{% trans "Group"%}</td>
     </tr>
     {% endif%}
-    {% if assets %}
+    {% if request.user.extension.getassets %}
     <tr>
-        <td>{{assets.last.pk}}</td>
-        <td class="link"><a href="">{{assets.last}}</a></td>
+        {% if request.user.is_staff %}
+        <td>{{request.user.extension.getassets.last.pk}}</td>
+        {% endif %}
+        <td class="link"><a href="{% url 'assetprofile' groupslug=request.user.extension.getassets.last.group.slug assetslug=request.user.extension.getassets.last.slug %}">{{request.user.extension.getassets.last}}</a></td>
         <td>{% trans "Asset"%}</td>
     </tr>
     {% endif%}
-    {% if softwares %}
+    {% if request.user.extension.getsoftwares %}
     <tr>
-        <td>{{softwares.last.pk}}</td>
-        <td class="link"><a href="">{{softwares.last}}</a></td>
+        {% if request.user.is_staff %}
+        <td>{{request.user.extension.getsoftwares.last.pk}}</td>
+        {% endif %}
+        <td class="link"><a href="{% url 'softwareprofile' groupslug=request.user.extension.getsoftwares.last.asset.group.slug assetslug=request.user.extension.getsoftwares.last.asset.slug softwareslug=request.user.extension.getsoftwares.last.slug %}">{{request.user.extension.getsoftwares.last}}</a></td>
         <td>{% trans "Software"%}</td>
     </tr>
     {% endif%}
-    {% if vulnerabilities%}
+    {% if request.user.extension.getvulnerabilities%}
     <tr>
-        <td>{{vulnerabilities.last.pk}}</td>
-        <td class="link"><a href="">{{vulnerabilities.last}}</a></td>
+        {% if request.user.is_staff %}
+        <td>{{request.user.extension.getvulnerabilities.last.pk}}</td>
+        {% endif %}
+        <td class="link"><a href="">{{request.user.extension.getvulnerabilities.last}}</a></td>
         <td>{% trans "Vulnerability"%}</td>
     </tr>
     {% endif%}
