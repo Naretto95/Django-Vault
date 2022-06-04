@@ -15,7 +15,7 @@ class TimeStampMixin(models.Model):
 class Vulnerability(TimeStampMixin):
     name = models.CharField(max_length=100,verbose_name=_('Name'))
     description = models.TextField(verbose_name=_('Description'))
-    score = models.IntegerField(verbose_name=_('Score'))
+    score = models.FloatField(verbose_name=_('Score'))
     severity = models.CharField(max_length=100,verbose_name=_('Severity'))
     link = models.URLField(verbose_name=_('Link'))
     cpe = models.ForeignKey('CPE', on_delete=models.CASCADE,verbose_name=_('CPE'), related_name='+')
@@ -29,7 +29,7 @@ class Vulnerability(TimeStampMixin):
         self.cpe.vulnerabilities.add(self)
 
 class CPE(TimeStampMixin):
-    name = models.CharField(max_length=100, verbose_name=_('Name'))
+    name = models.CharField(max_length=100, verbose_name=_('Name'), unique=True)
     reference = models.TextField(verbose_name=_('Reference'))
     vulnerabilities = models.ManyToManyField(Vulnerability, blank=True, verbose_name=_('Vulnerabilities'), related_name='+')
 

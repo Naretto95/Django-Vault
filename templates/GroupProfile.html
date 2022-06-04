@@ -89,7 +89,11 @@
 <br>
 <details>
     <summary>{% trans "Details" %}</summary>
-    {% trans "Description" %} : {{group.description}}<br>
+    <div class="card" style="width: 30rem;">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item"><h6>{% trans "Description" %} :</h6> {{group.description}}</li>
+        </ul>
+    </div>
 </details>
 <br>
 <div class="container">
@@ -167,7 +171,7 @@
                 </tr>
                 {% endfor %}
             </tbody>
-            </table>
+        </table>
         </form>
     </div>
     <div id="softwares" class="tab-pane">
@@ -199,19 +203,17 @@
                 {% endif %}
                 <td class="link"><a href="{% url 'softwareprofile' groupslug=software.asset.group.slug assetslug=software.asset.slug softwareslug=software.slug %}">{{software}}</a></td>
                 <td class="link"><a href="{% url 'assetprofile' groupslug=software.asset.group.slug assetslug=software.asset.slug %}">{{software.asset}}</a></td>
-                <td>{{software.vulnerabilities.count}}</td>
+                <td>{{software.cpe.vulnerabilities.count}}</td>
                 </tr>
                 {% endfor %}
             </tbody>
-            </table>
+        </table>
         </form>
     </div>
     <div id="vulnerabilities" class="tab-pane">
         <br>
         <h3>{% trans "Vulnerabilities" %}</h3>
         <br>
-        <form method="POST" >
-        {% csrf_token %}
         <table class="table display table-striped table-bordered">
             <thead>
                 <tr>
@@ -228,13 +230,12 @@
                 {% if request.user.is_staff %}
                 <td>{{vulnerability.pk}}</td>
                 {% endif %}
-                <td class="link"><a href="">{{vulnerability}}</a></td>
-                <td class="link">{{vulnerability.cpe}}</td>
+                <td class="link"><a href="{% url 'vulnerabilityprofile' vulnerabilityslug=vulnerability.slug %}">{{vulnerability}}</a></td>
+                <td>{{vulnerability.cpe}}</td>
                 </tr>
                 {% endfor %}
             </tbody>
-            </table>
-        </form>
+        </table>
     </div>
 </div>
 {% endblock %}

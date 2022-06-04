@@ -3,6 +3,7 @@ from django.shortcuts import render, HttpResponseRedirect
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from .forms import *
+from .serializers import *
 from django.views import generic
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -11,27 +12,123 @@ from django.views import View
 from django.utils.translation import gettext as _
 from django.shortcuts import redirect
 from dal import autocomplete
+from rest_framework import viewsets,filters
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from .permissions import *
 import requests
 
 apikey = '3d50abec-7071-4c24-9de8-fb29fb5b5d39'
+languages = ['en', 'fr']
 
 def AnalyseSoftware(software):
     session = requests.session()
     params = {'cpeMatchString' : software.cpe.reference, 'apiKey' : apikey}
     response = session.get('https://services.nvd.nist.gov/rest/json/cves/1.0/', params=params)
-    description = response.json()["result"]['CVE_Items'][0]['cve']['description']['description_data'][0]['value']
-    score = response.json()["result"]['CVE_Items'][0]['impact']['baseMetricV3']['cvssV3']['baseScore']
-    severity = response.json()["result"]['CVE_Items'][0]['impact']['baseMetricV3']['cvssV3']['baseSeverity']
-    name = response.json()["result"]['CVE_Items'][0]['cve']['CVE_data_meta']['ID']
-    link = 'https://nvd.nist.gov/vuln/detail/' + name
-    Vulnerability.objects.get_or_create(name=name, description=description, score=score, severity=severity, link=link, cpe=software.cpe)
+    cve_items = response.json()["result"]['CVE_Items']
+    for cve_item in cve_items:
+        description = cve_item['cve']['description']['description_data'][0]['value']
+        score = cve_item['impact']['baseMetricV3']['cvssV3']['baseScore']
+        severity = cve_item['impact']['baseMetricV3']['cvssV3']['baseSeverity']
+        name = cve_item['cve']['CVE_data_meta']['ID']
+        link = 'https://nvd.nist.gov/vuln/detail/' + name
+        Vulnerability.objects.get_or_create(name=name, description=description, score=score, severity=severity, link=link, cpe=software.cpe)
 
-class CPEAutocomplete(autocomplete.Select2QuerySetView):
+class CPEAutocomplete(LoginRequiredMixin,autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = CPE.objects.all()
         if self.q:
             qs = qs.filter(name__icontains=self.q)
         return qs
+
+class GroupsViewSet(LoginRequiredMixin,viewsets.ModelViewSet):
+    search_fields = ['id','name','description','slug']
+    filter_backends = (filters.SearchFilter,DjangoFilterBackend)
+    filterset_fields = ['id','name','description','slug']
+    serializer_class = GroupSerializer
+    lookup_field = ('slug')
+
+    def get_queryset(self):
+        return self.request.user.extension.groups.all()
+
+    def create(self, request):
+        serializer = GroupSerializer(data=request.data)
+        if serializer.is_valid() and self.get_permissions():
+            serializer.save(extension=request.user.extension)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+    def get_permissions(self):
+        if self.action in ['list','retrieve','create']:
+            self.permission_classes = [IsAuthenticated,]
+        elif self.action in ['update', 'partial_update','destroy']:
+            self.permission_classes = [IsGroupOwner,]
+        return super().get_permissions()
+
+class AssetsViewSet(LoginRequiredMixin,viewsets.ModelViewSet):
+    search_fields = ['id','name','description','slug']
+    filter_backends = (filters.SearchFilter,DjangoFilterBackend)
+    filterset_fields = ['id','name','description','slug']
+    serializer_class = AssetSerializer
+    lookup_field = ('slug')
+
+    def get_queryset(self):
+        return self.request.user.extension.getassets().filter(group__slug=self.kwargs['group_slug'])
+
+    def create(self, request, group_slug):
+        group = request.user.extension.groups.get(slug=group_slug)
+        serializer = AssetSerializer(data=request.data)
+        if serializer.is_valid() and self.get_permissions():
+            serializer.save(group=group)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+    def get_permissions(self):
+        if self.action in ['list','retrieve','create']:
+            self.permission_classes = [IsAuthenticated,]
+        elif self.action in ['update', 'partial_update','destroy']:
+            self.permission_classes = [IsAssetOwner,]
+        return super().get_permissions()
+
+class SoftwareViewSet(LoginRequiredMixin,viewsets.ModelViewSet):
+    search_fields = ['id','name','description','version','cpe','slug']
+    filter_backends = (filters.SearchFilter,DjangoFilterBackend)
+    filterset_fields = ['id','name','description','version','cpe','slug']
+    serializer_class = SoftwareSerializer
+    lookup_field = ('slug')
+
+    def get_queryset(self):
+        return self.request.user.extension.getsoftwares().filter(asset__slug=self.kwargs['asset_slug'])
+
+    def create(self, request, group_slug, asset_slug):
+        asset = request.user.extension.getassets().get(slug=asset_slug)
+        serializer = SoftwareSerializer(data=request.data)
+        if serializer.is_valid() and self.get_permissions():
+            serializer.save(asset=asset)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+    def get_permissions(self):
+        if self.action in ['list','retrieve','create']:
+            self.permission_classes = [IsAuthenticated,]
+        elif self.action in ['update', 'partial_update','destroy']:
+            self.permission_classes = [IsSoftwareOwner,]
+        return super().get_permissions()
+
+class VulnerabilityViewSet(LoginRequiredMixin,viewsets.ModelViewSet):
+    search_fields = ['id','name','description','score','severity','link','slug']
+    filter_backends = (filters.SearchFilter,DjangoFilterBackend)
+    filterset_fields = ['id','name','description','score','severity','link','slug']
+    lookup_field = ('slug')
+
+    def get_queryset(self):
+        return self.request.user.extension.getsoftwares().get(slug=self.kwargs['software_slug']).getvulnerabilities()
+
+    def get_permissions(self):
+        if self.action in ['list','retrieve']:
+            self.permission_classes = [IsAuthenticated,]
+        return super().get_permissions()
 
 class Login(LoginView):
     template_name = 'Login.html'
@@ -52,7 +149,7 @@ class Home(LoginRequiredMixin, View):
     template_name='Home.html'
 
     def get(self, request):
-        data = {'homenav' : True,'available_languages': ['en', 'fr']}
+        data = {'homenav' : True,'available_languages': languages}
         return render(request, self.template_name, data)
 
 class Groups(LoginRequiredMixin, View):
@@ -61,7 +158,7 @@ class Groups(LoginRequiredMixin, View):
     def get(self, request):
         groupform = GroupForm()
         assetform = AssetForm(user=request.user)
-        data = {'groupnav' : True,'available_languages': ['en', 'fr'],'groupform' : groupform,'assetform': assetform}
+        data = {'groupnav' : True,'available_languages': languages,'groupform' : groupform,'assetform': assetform}
         return render(request, self.template_name, data)
     
     def post(self, request):
@@ -112,7 +209,7 @@ class AdminPanel(LoginRequiredMixin, View):
 
     def get(self, request):
         if request.user.is_superuser:
-            data = {'adminnav': True,'available_languages': ['en', 'fr']}
+            data = {'adminnav': True,'available_languages': languages}
             return render(request, self.template_name, data)
         else:
             return HttpResponseRedirect('/')
@@ -126,7 +223,7 @@ class GroupProfile(LoginRequiredMixin, View):
             assetform = AssetForm()
             groupform = GroupForm(instance=group)
             softwareform = SoftwareForm(group=group)
-            data = {'available_languages': ['en', 'fr'], 'groupform': groupform, 'assetform': assetform, 'group': group, 'softwareform': softwareform}
+            data = {'available_languages': languages, 'groupform': groupform, 'assetform': assetform, 'group': group, 'softwareform': softwareform}
             return render(request, self.template_name, data)
         else:
             return HttpResponseRedirect(request.path_info)
@@ -197,7 +294,7 @@ class AssetProfile(LoginRequiredMixin, View):
             asset = Asset.objects.get(slug=assetslug)
             assetform = AssetForm(instance=asset,user=request.user)
             softwareform = SoftwareForm()
-            data = {'available_languages': ['en', 'fr'], 'assetform': assetform, 'softwareform': softwareform, 'asset': asset}
+            data = {'available_languages': languages, 'assetform': assetform, 'softwareform': softwareform, 'asset': asset}
             return render(request, self.template_name, data)
         else:
             return HttpResponseRedirect(request.path_info)
@@ -249,7 +346,7 @@ class SoftwareProfile(LoginRequiredMixin, View):
         if group in request.user.extension.groups.all():
             software = Software.objects.get(slug=softwareslug)
             softwareform = SoftwareForm(instance=software,group=group)
-            data = {'available_languages': ['en', 'fr'], 'softwareform': softwareform, 'software': software}
+            data = {'available_languages': languages, 'softwareform': softwareform, 'software': software}
             return render(request, self.template_name, data)
         else:
             return HttpResponseRedirect(request.path_info)
@@ -275,3 +372,12 @@ class SoftwareProfile(LoginRequiredMixin, View):
                 AnalyseSoftware(software)
                 messages.success(request, _("Software analysed !"))
                 return HttpResponseRedirect(request.path_info)
+
+class VulnerabilityProfile(LoginRequiredMixin, View):
+    template_name='VulnerabilityProfile.html'
+
+    def get(self, request, vulnerabilityslug):
+        vulnerability = Vulnerability.objects.get(slug=vulnerabilityslug)
+        if vulnerability in request.user.extension.getvulnerabilities():
+            data = {'available_languages': languages,'vulnerability': vulnerability}
+            return render(request, self.template_name, data)

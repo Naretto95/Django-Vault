@@ -86,7 +86,7 @@
         {% if request.user.is_staff %}
         <td>{{request.user.extension.getvulnerabilities.last.pk}}</td>
         {% endif %}
-        <td class="link"><a href="">{{request.user.extension.getvulnerabilities.last}}</a></td>
+        <td class="link"><a href="{% url 'vulnerabilityprofile' vulnerabilityslug=request.user.extension.getvulnerabilities.last.slug %}">{{request.user.extension.getvulnerabilities.last}}</a></td>
         <td>{% trans "Vulnerability"%}</td>
     </tr>
     {% endif%}

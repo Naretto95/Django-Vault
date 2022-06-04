@@ -40,15 +40,17 @@
 <br>
 <details>
     <summary>{% trans "Details" %}</summary>
-    {% trans "Description" %} : {{software.description}}<br>
+    <div class="card" style="width: 30rem;">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item"><h6>{% trans "Description" %} :</h6> {{software.description}}</li>
+        </ul>
+    </div>
 </details>
 <br>
 <hr>
 <br>
 <h3>{% trans "Vulnerabilities" %}</h3>
 <br>
-<form method="POST" >
-{% csrf_token %}
 <table class="table display table-striped table-bordered">
     <thead>
         <tr>
@@ -64,12 +66,11 @@
         {% if request.user.is_staff %}
         <td>{{software.pk}}</td>
         {% endif %}
-        <td class="link"><a href="">{{vulnerability}}</a></td>
+        <td class="link"><a href="{% url 'vulnerabilityprofile' vulnerabilityslug=vulnerability.slug %}">{{vulnerability}}</a></td>
         </tr>
         {% endfor %}
     </tbody>
-    </table>
-</form>
+</table>
 {% endblock %}
 {% block js %}
 {{ softwareform.media }}

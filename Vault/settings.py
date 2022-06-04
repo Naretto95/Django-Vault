@@ -43,7 +43,10 @@ INSTALLED_APPS = [
     'django_extensions',
     'Main.apps.MainConfig',
     'import_export',
-    'crispy_forms'
+    'crispy_forms',
+    'oauth2_provider',
+    'rest_framework',
+    'django_filters'
 ]
 
 MIDDLEWARE = [
@@ -107,6 +110,32 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+OAUTH2_PROVIDER = {
+    'ACCESS_TOKEN_EXPIRE_SECONDS': 36000 * 2,
+    'REFRESH_TOKEN_EXPIRE_SECONDS': None,
+    'OAUTH_SINGLE_ACCESS_TOKEN': True,
+    'OAUTH_DELETE_EXPIRED': True
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ),
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 50,
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/

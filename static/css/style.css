@@ -27,7 +27,7 @@ a:focus {
 
 .navbar {
     padding: 15px 10px;
-    background: #fff;
+    background: #f9f9f9;
     border: none;
     border-radius: 0;
     margin-bottom: 40px;
@@ -61,7 +61,7 @@ a:focus {
     min-width: 250px;
     max-width: 250px;
     background: #0E5484;
-    color: #fff;
+    color: #f5f5f5;
     transition: all 0.3s;
 }
 
@@ -79,7 +79,7 @@ a:focus {
 }
 
 #sidebar ul p {
-    color: #fff;
+    color: #f5f5f5;
     padding: 10px;
 }
 
@@ -91,12 +91,12 @@ a:focus {
 
 #sidebar ul li a:hover {
     color: #0E5484;
-    background: #fff;
+    background: #f5f5f5;
 }
 
 #sidebar ul li.active>a,
 a[aria-expanded="true"] {
-    color: #fff;
+    color: #f5f5f5;
     background: #0c4972;
 }
 
