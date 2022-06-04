@@ -11,6 +11,20 @@ from django.views import View
 from django.utils.translation import gettext as _
 from django.shortcuts import redirect
 from dal import autocomplete
+import requests
+
+apikey = '3d50abec-7071-4c24-9de8-fb29fb5b5d39'
+
+def AnalyseSoftware(software):
+    session = requests.session()
+    params = {'cpeMatchString' : software.cpe.reference, 'apiKey' : apikey}
+    response = session.get('https://services.nvd.nist.gov/rest/json/cves/1.0/', params=params)
+    description = response.json()["result"]['CVE_Items'][0]['cve']['description']['description_data'][0]['value']
+    score = response.json()["result"]['CVE_Items'][0]['impact']['baseMetricV3']['cvssV3']['baseScore']
+    severity = response.json()["result"]['CVE_Items'][0]['impact']['baseMetricV3']['cvssV3']['baseSeverity']
+    name = response.json()["result"]['CVE_Items'][0]['cve']['CVE_data_meta']['ID']
+    link = 'https://nvd.nist.gov/vuln/detail/' + name
+    Vulnerability.objects.get_or_create(name=name, description=description, score=score, severity=severity, link=link, cpe=software.cpe)
 
 class CPEAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
@@ -257,3 +271,7 @@ class SoftwareProfile(LoginRequiredMixin, View):
                 software.delete()
                 messages.success(request, _("Software deleted !"))
                 return redirect('assetprofile', groupslug=group.slug, assetslug=software.asset.slug)
+            elif "analysesoftware" in request.POST:
+                AnalyseSoftware(software)
+                messages.success(request, _("Software analysed !"))
+                return HttpResponseRedirect(request.path_info)
