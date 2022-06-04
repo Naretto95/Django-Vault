@@ -11,19 +11,21 @@ from . import views
 
 api = 'api/v1/'
 router = routers.DefaultRouter()
-router.register(r'groups', views.GroupsViewSet, basename="groups")
-asset_router = routers.NestedSimpleRouter(router, r'groups', lookup='group')
-asset_router.register(r'assets', views.AssetsViewSet, basename='asset')
-software_router = routers.NestedSimpleRouter(asset_router, r'assets', lookup='asset')
-software_router.register(r'softwares', views.SoftwareViewSet, basename='software')
-vulnerability_router = routers.NestedSimpleRouter(software_router, r'softwares', lookup='software')
-vulnerability_router.register(r'vulnerabilities', views.VulnerabilityViewSet, basename='vulnerability')
+router.register(r'groups', views.GroupsViewSet, basename="group")
+group_router = routers.NestedSimpleRouter(router, r'groups', lookup='group')
+group_router.register(r'assets', views.AssetsViewSet, basename='asset')
+group_router.register(r'vulnerabilities', views.VulnerabilityViewSet, basename='vulnerability')
+asset_router = routers.NestedSimpleRouter(group_router, r'assets', lookup='asset')
+asset_router.register(r'softwares', views.SoftwareViewSet, basename='software')
+asset_router.register(r'vulnerabilities', views.VulnerabilityViewSet, basename='vulnerability')
+software_router = routers.NestedSimpleRouter(asset_router, r'softwares', lookup='software')
+software_router.register(r'vulnerabilities', views.VulnerabilityViewSet, basename='vulnerability')
 
 urlpatterns = [
     path(api, include(router.urls)),
+    path(api, include(group_router.urls)),
     path(api, include(asset_router.urls)),
     path(api, include(software_router.urls)),
-    path(api, include(vulnerability_router.urls)),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('', views.Home.as_view(),name="home"),
     path('groups/', views.Groups.as_view(),name="groups"),

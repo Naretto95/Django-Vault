@@ -121,10 +121,17 @@ class VulnerabilityViewSet(LoginRequiredMixin,viewsets.ModelViewSet):
     filter_backends = (filters.SearchFilter,DjangoFilterBackend)
     filterset_fields = ['id','name','description','score','severity','link','slug']
     lookup_field = ('slug')
+    serializer_class = VulnerabilitySerializer
+    http_method_names = ['get']
 
     def get_queryset(self):
-        return self.request.user.extension.getsoftwares().get(slug=self.kwargs['software_slug']).getvulnerabilities()
-
+        if self.kwargs.get('software_slug',None) :
+            return self.request.user.extension.getsoftwares().get(slug=self.kwargs['software_slug']).getvulnerabilities()
+        elif self.kwargs.get('asset_slug',None) :
+            return self.request.user.extension.getassets().get(slug=self.kwargs['asset_slug']).getvulnerabilities()
+        elif self.kwargs.get('group_slug') :
+            return self.request.user.extension.groups.get(slug=self.kwargs['group_slug']).getvulnerabilities()
+    
     def get_permissions(self):
         if self.action in ['list','retrieve']:
             self.permission_classes = [IsAuthenticated,]
