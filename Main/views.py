@@ -11,29 +11,15 @@ from django.contrib.auth.views import LoginView
 from django.views import View
 from django.utils.translation import gettext as _
 from django.shortcuts import redirect
+from rest_framework.decorators import action
 from dal import autocomplete
 from rest_framework import viewsets,filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .permissions import *
-import requests
 
-apikey = '3d50abec-7071-4c24-9de8-fb29fb5b5d39'
 languages = ['en', 'fr']
-
-def AnalyseSoftware(software):
-    session = requests.session()
-    params = {'cpeMatchString' : software.cpe.reference, 'apiKey' : apikey}
-    response = session.get('https://services.nvd.nist.gov/rest/json/cves/1.0/', params=params)
-    cve_items = response.json()["result"]['CVE_Items']
-    for cve_item in cve_items:
-        description = cve_item['cve']['description']['description_data'][0]['value']
-        score = cve_item['impact']['baseMetricV3']['cvssV3']['baseScore']
-        severity = cve_item['impact']['baseMetricV3']['cvssV3']['baseSeverity']
-        name = cve_item['cve']['CVE_data_meta']['ID']
-        link = 'https://nvd.nist.gov/vuln/detail/' + name
-        Vulnerability.objects.get_or_create(name=name, description=description, score=score, severity=severity, link=link, cpe=software.cpe)
 
 class CPEAutocomplete(LoginRequiredMixin,autocomplete.Select2QuerySetView):
     def get_queryset(self):
@@ -58,6 +44,12 @@ class GroupsViewSet(LoginRequiredMixin,viewsets.ModelViewSet):
             serializer.save(extension=request.user.extension)
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
+
+    @action(detail=True, methods=['get'])
+    def analyse_vulnerabilities(self, request, slug):
+        group = self.get_object()
+        group.analyse_vulnerabilities()
+        return Response(_("Group analysed!"))
 
     def get_permissions(self):
         if self.action in ['list','retrieve','create']:
@@ -84,6 +76,12 @@ class AssetsViewSet(LoginRequiredMixin,viewsets.ModelViewSet):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
+    @action(detail=True, methods=['get'])
+    def analyse_vulnerabilities(self, request, group_slug, slug):
+        asset = self.get_object()
+        asset.analyse_vulnerabilities()
+        return Response(_("Asset analysed!"))
+
     def get_permissions(self):
         if self.action in ['list','retrieve','create']:
             self.permission_classes = [IsAuthenticated,]
@@ -108,6 +106,12 @@ class SoftwareViewSet(LoginRequiredMixin,viewsets.ModelViewSet):
             serializer.save(asset=asset)
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
+
+    @action(detail=True, methods=['get'])
+    def analyse_vulnerabilities(self, request, group_slug, asset_slug, slug):
+        software = self.get_object()
+        software.analyse_vulnerabilities()
+        return Response(_("Software analysed!"))
 
     def get_permissions(self):
         if self.action in ['list','retrieve','create']:
@@ -291,6 +295,10 @@ class GroupProfile(LoginRequiredMixin, View):
                 else:
                     messages.success(request, _("Software deleted !"))
                 return HttpResponseRedirect(request.path_info)
+            elif "analysegroup" in request.POST:
+                group.analyse_vulnerabilities()
+                messages.success(request, _("Group analysed !"))
+                return HttpResponseRedirect(request.path_info)
 
 class AssetProfile(LoginRequiredMixin, View):
     template_name='AssetProfile.html'
@@ -344,6 +352,10 @@ class AssetProfile(LoginRequiredMixin, View):
                 asset.delete()
                 messages.success(request, _("Asset deleted !"))
                 return redirect('groupprofile', groupslug=group.slug)
+            elif "analyseasset" in request.POST:
+                asset.analyse_vulnerabilities()
+                messages.success(request, _("Asset analysed !"))
+                return HttpResponseRedirect(request.path_info)
 
 class SoftwareProfile(LoginRequiredMixin, View):
     template_name='SoftwareProfile.html'
@@ -376,7 +388,7 @@ class SoftwareProfile(LoginRequiredMixin, View):
                 messages.success(request, _("Software deleted !"))
                 return redirect('assetprofile', groupslug=group.slug, assetslug=software.asset.slug)
             elif "analysesoftware" in request.POST:
-                AnalyseSoftware(software)
+                software.analyse_vulnerabilities()
                 messages.success(request, _("Software analysed !"))
                 return HttpResponseRedirect(request.path_info)
 

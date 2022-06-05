@@ -60,6 +60,7 @@
     {% csrf_token %}
     <button type="submit" class="btn btn-danger" name="deleteasset" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
     <button type="button" class="btn btn-warning" style="color:white" data-toggle="modal" data-target="#assetmodal">{% trans "Edit" %}</button>
+    <button type="submit" class="btn btn-primary" name="analyseasset">{% trans "Analyse Vulnerabilities" %}</button>
 </form>
 <br>
 <details>

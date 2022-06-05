@@ -5,8 +5,6 @@ from django.contrib.auth.views import LogoutView
 from rest_framework.schemas import get_schema_view
 from rest_framework_nested import routers
 from django.views.generic import TemplateView
-
-from Main.models import Vulnerability
 from . import views
 
 api = 'api/v1/'

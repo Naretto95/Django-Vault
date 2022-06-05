@@ -4,6 +4,9 @@ from django_extensions.db.fields import AutoSlugField
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+import requests
+
+apikey = '3d50abec-7071-4c24-9de8-fb29fb5b5d39'
 
 class TimeStampMixin(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -44,11 +47,29 @@ class Software(TimeStampMixin):
     asset = models.ForeignKey('Asset', on_delete=models.CASCADE,verbose_name=_('Asset'), related_name='+')
     slug = AutoSlugField(_('Slug'), unique=True, max_length=100, populate_from=('name','version','asset'))
 
-    def __str__(self):
-        return self.name
-
     def getvulnerabilities(self):
         return self.cpe.vulnerabilities.all()
+
+    def analyse_vulnerabilities(self):
+        if self.cpe :
+            session = requests.session()
+            params = {'cpeMatchString' : self.cpe.reference, 'apiKey' : apikey}
+            response = session.get('https://services.nvd.nist.gov/rest/json/cves/1.0/', params=params)
+            cve_items = response.json()["result"]['CVE_Items']
+            for cve_item in cve_items:
+                description = cve_item['cve']['description']['description_data'][0]['value']
+                try :
+                    score = cve_item['impact']['baseMetricV3']['cvssV3']['baseScore']
+                    severity = cve_item['impact']['baseMetricV3']['cvssV3']['baseSeverity']
+                except :
+                    score = cve_item['impact']['baseMetricV2']['cvssV2']['baseScore']
+                    severity = cve_item['impact']['baseMetricV2']['severity']
+                name = cve_item['cve']['CVE_data_meta']['ID']
+                link = 'https://nvd.nist.gov/vuln/detail/' + name
+                Vulnerability.objects.get_or_create(name=name, description=description, score=score, severity=severity, link=link, cpe=self.cpe)
+
+    def __str__(self):
+        return self.name
 
     def save(self, *args, **kwargs):
         super(Software,self).save(*args, **kwargs)
@@ -64,9 +85,13 @@ class Asset(TimeStampMixin):
     def getvulnerabilities(self):
         return Vulnerability.objects.filter(cpe__in=self.softwares.values_list('cpe',flat=True))
 
+    def analyse_vulnerabilities(self):
+        for software in self.softwares.all():
+            software.analyse_vulnerabilities()
+
     def __str__(self):
         return self.name
-    
+
     def save(self, *args, **kwargs):
         super(Asset,self).save(*args, **kwargs)
         self.group.assets.add(self)
@@ -83,6 +108,10 @@ class Group(TimeStampMixin):
     
     def getvulnerabilities(self):
         return Vulnerability.objects.filter(cpe__in=self.getsoftwares().values_list('cpe',flat=True))
+
+    def analyse_vulnerabilities(self):
+        for asset in self.assets.all():
+            asset.analyse_vulnerabilities()
     
     def __str__(self):
         return self.name
