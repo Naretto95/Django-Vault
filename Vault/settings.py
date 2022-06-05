@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+PROJECT_PATH = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -162,9 +163,7 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT  = os.path.join(BASE_DIR, 'staticfiles')
 
-LOCAL_PATHS = [
-    os.path.join(BASE_DIR, 'locale/'),
-]
+LOCALE_PATHS = (os.path.join(PROJECT_PATH, '../locale'),)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

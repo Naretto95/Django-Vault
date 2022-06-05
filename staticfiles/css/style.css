@@ -6,17 +6,7 @@ html {
 
 body {
     font-family: 'Poppins', sans-serif;
-    background: #ff0000;
-    display: -ms-flexbox;
-    display: -webkit-box;
-    display: flex;
-    -ms-flex-align: center;
-    -ms-flex-pack: center;
-    -webkit-box-align: center;
-    align-items: center;
-    -webkit-box-pack: center;
-    justify-content: center;
-    background-color: #ff0000;
+    background: #f5f5f5;
 }
 
 p {
@@ -25,13 +15,6 @@ p {
     font-weight: 300;
     line-height: 1.7em;
 
-}
-
-.form-signin {
-  width: 100%;
-  max-width: 380px;
-  padding: 15px;
-  margin: 0 auto;
 }
 
 a,
@@ -44,7 +27,7 @@ a:focus {
 
 .navbar {
     padding: 15px 10px;
-    background: #fff;
+    background: #f9f9f9;
     border: none;
     border-radius: 0;
     margin-bottom: 40px;
@@ -77,8 +60,8 @@ a:focus {
 #sidebar {
     min-width: 250px;
     max-width: 250px;
-    background: #420098;
-    color: #fff;
+    background: #0E5484;
+    color: #f5f5f5;
     transition: all 0.3s;
 }
 
@@ -88,7 +71,7 @@ a:focus {
 
 #sidebar .sidebar-header {
     padding: 20px;
-    background: #3C048c;
+    background: #0c4972;
 }
 
 #sidebar ul.components {
@@ -96,7 +79,7 @@ a:focus {
 }
 
 #sidebar ul p {
-    color: #fff;
+    color: #f5f5f5;
     padding: 10px;
 }
 
@@ -107,14 +90,14 @@ a:focus {
 }
 
 #sidebar ul li a:hover {
-    color: #420098;
-    background: #fff;
+    color: #0E5484;
+    background: #f5f5f5;
 }
 
 #sidebar ul li.active>a,
 a[aria-expanded="true"] {
-    color: #fff;
-    background: #3C048c;
+    color: #f5f5f5;
+    background: #0c4972;
 }
 
 a[data-toggle="collapse"] {
@@ -132,7 +115,7 @@ a[data-toggle="collapse"] {
 ul ul a {
     font-size: 0.9em !important;
     padding-left: 30px !important;
-    background: #3C048c;
+    background: #0c4972;
 }
 
 ul.CTAs {
@@ -172,4 +155,24 @@ ul.CTAs a {
     #sidebarCollapse span {
         display: none;
     }
+}
+
+@media (min-width: 992px) {
+    #navbarSupportedContent .nav-item {
+        margin-left: 3rem;
+    }
+}
+
+.link{
+    color:#126ba7;
+}
+
+.link:hover{
+    color:#126ba7;
+    text-decoration:underline;
+}
+
+.formbutton {
+    float:right;
+    margin:0.25rem;
 }

@@ -20,6 +20,7 @@ software_router = routers.NestedSimpleRouter(asset_router, r'softwares', lookup=
 software_router.register(r'vulnerabilities', views.VulnerabilityViewSet, basename='vulnerability')
 
 urlpatterns = [
+    url(r'^i18n/', include('django.conf.urls.i18n')),
     path(api, include(router.urls)),
     path(api, include(group_router.urls)),
     path(api, include(asset_router.urls)),
@@ -38,6 +39,5 @@ urlpatterns = [
     url(r'^openapi-schema', get_schema_view(title="Vault API",description="Vault",version="1.0.0",public=True,), name='openapi-schema'),
     url(r'docs/', TemplateView.as_view(template_name='swagger-ui.html',extra_context={'schema_url': 'openapi-schema'}), name='swagger-ui'),
     url(r'^cpe-autocomplete/$',views.CPEAutocomplete.as_view(),name='cpe-autocomplete',),
-    url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^logout/$', LogoutView.as_view(), {'next_page': settings.LOGOUT_REDIRECT_URL}, name='logout'),
 ]
