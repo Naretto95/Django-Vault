@@ -1,0 +1,28 @@
+{% extends 'Base.html' %}
+{% load i18n %}
+{% block content %}
+<form method="POST" >
+    {% csrf_token %}
+    <h3>{% trans "Backups" %}</h3>
+    <br>
+    <button type="submit" class="formbutton btn btn-primary" name="restorebackup">{% trans "Restore" %}</button>
+    <button type="submit" class="formbutton btn btn-primary" name="addbackup">{% trans "Add" %}</button>
+    <button type="submit" class="formbutton btn btn-danger" name="deletebackup" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
+    <table class="table table-striped table-bordered display">
+        <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">{% trans "name" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for file in files%}
+        <tr>
+            <td><input name="backupcheck" value="{{ file }}" type="checkbox"></td>
+            <td>{{ file }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</form>
+{% endblock %}

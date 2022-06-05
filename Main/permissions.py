@@ -5,7 +5,7 @@ class IsGroupOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.user.is_authenticated:
             try:
-                if obj in request.user.extension.groups.all():
+                if obj in request.user.extension.groups.all() or obj.group in request.user.extension.groups.all():
                     return True
             except BaseException:
                 return False
@@ -17,7 +17,7 @@ class IsAssetOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.user.is_authenticated:
             try:
-                if obj in request.user.extension.getassets():
+                if obj in request.user.extension.getassets() or obj.asset in request.user.extension.getassets():
                     return True
             except BaseException:
                 return False

@@ -23,6 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-m$n)&_6ys#-hh^!x^jspuxa@5y5((k+cmf*%(7879g59z&=8bj'
+API_KEY = '3d50abec-7071-4c24-9de8-fb29fb5b5d39'
+API_URL = 'api/v1/'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -47,8 +49,14 @@ INSTALLED_APPS = [
     'crispy_forms',
     'oauth2_provider',
     'rest_framework',
-    'django_filters'
+    'django_filters',
+    'dbbackup'
 ]
+
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {
+    'location': os.path.join(BASE_DIR, 'backups')
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -142,6 +150,13 @@ REST_FRAMEWORK = {
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
 LANGUAGE_CODE = 'en'
+
+from django.utils.translation import gettext_lazy as _
+
+LANGUAGES = [
+    ("en", _("English")),
+    ("fr", _("French")),
+]
 
 TIME_ZONE = 'UTC'
 

@@ -7,7 +7,6 @@ from rest_framework_nested import routers
 from django.views.generic import TemplateView
 from . import views
 
-api = 'api/v1/'
 router = routers.DefaultRouter()
 router.register(r'groups', views.GroupsViewSet, basename="group")
 group_router = routers.NestedSimpleRouter(router, r'groups', lookup='group')
@@ -21,16 +20,17 @@ software_router.register(r'vulnerabilities', views.VulnerabilityViewSet, basenam
 
 urlpatterns = [
     url(r'^i18n/', include('django.conf.urls.i18n')),
-    path(api, include(router.urls)),
-    path(api, include(group_router.urls)),
-    path(api, include(asset_router.urls)),
-    path(api, include(software_router.urls)),
+    path(settings.API_URL, include(router.urls)),
+    path(settings.API_URL, include(group_router.urls)),
+    path(settings.API_URL, include(asset_router.urls)),
+    path(settings.API_URL, include(software_router.urls)),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('', views.Home.as_view(),name="home"),
     path('groups/', views.Groups.as_view(),name="groups"),
     path('login/', views.Login.as_view(redirect_authenticated_user=True),name="login"),
     path('search/', views.Login.as_view(redirect_authenticated_user=True),name="search"),
     path('adminpanel/', views.AdminPanel.as_view(),name="adminpanel"),
+    path('adminpanel/backup/', views.Backup.as_view(),name="backup"),
     path('signup/', views.SignUp.as_view(),name="signup"),
     path('vulnerability/<str:vulnerabilityslug>/', views.VulnerabilityProfile.as_view(),name="vulnerabilityprofile"),
     path('groups/<str:groupslug>/', views.GroupProfile.as_view(),name="groupprofile"),

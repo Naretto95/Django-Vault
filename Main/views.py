@@ -13,13 +13,15 @@ from django.utils.translation import gettext as _
 from django.shortcuts import redirect
 from rest_framework.decorators import action
 from dal import autocomplete
+from django.core import management
 from rest_framework import viewsets,filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from .mixins import *
 from .permissions import *
-
-languages = ['en', 'fr']
+from django.conf import settings
+import os
 
 class CPEAutocomplete(LoginRequiredMixin,autocomplete.Select2QuerySetView):
     def get_queryset(self):
@@ -84,7 +86,7 @@ class AssetsViewSet(LoginRequiredMixin,viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action in ['list','retrieve','create']:
-            self.permission_classes = [IsAuthenticated,]
+            self.permission_classes = [IsGroupOwner,]
         elif self.action in ['update', 'partial_update','destroy']:
             self.permission_classes = [IsAssetOwner,]
         return super().get_permissions()
@@ -115,7 +117,7 @@ class SoftwareViewSet(LoginRequiredMixin,viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action in ['list','retrieve','create']:
-            self.permission_classes = [IsAuthenticated,]
+            self.permission_classes = [IsAssetOwner,]
         elif self.action in ['update', 'partial_update','destroy']:
             self.permission_classes = [IsSoftwareOwner,]
         return super().get_permissions()
@@ -160,7 +162,7 @@ class Home(LoginRequiredMixin, View):
     template_name='Home.html'
 
     def get(self, request):
-        data = {'homenav' : True,'available_languages': languages}
+        data = {'homenav' : True,'available_languages': settings.LANGUAGES}
         return render(request, self.template_name, data)
 
 class Groups(LoginRequiredMixin, View):
@@ -169,7 +171,7 @@ class Groups(LoginRequiredMixin, View):
     def get(self, request):
         groupform = GroupForm()
         assetform = AssetForm(user=request.user)
-        data = {'groupnav' : True,'available_languages': languages,'groupform' : groupform,'assetform': assetform}
+        data = {'groupnav' : True,'available_languages': settings.LANGUAGES,'groupform' : groupform,'assetform': assetform}
         return render(request, self.template_name, data)
     
     def post(self, request):
@@ -220,7 +222,7 @@ class AdminPanel(LoginRequiredMixin, View):
 
     def get(self, request):
         if request.user.is_superuser:
-            data = {'adminnav': True,'available_languages': languages}
+            data = {'adminnav': True,'available_languages': settings.LANGUAGES}
             return render(request, self.template_name, data)
         else:
             return HttpResponseRedirect('/')
@@ -234,7 +236,7 @@ class GroupProfile(LoginRequiredMixin, View):
             assetform = AssetForm()
             groupform = GroupForm(instance=group)
             softwareform = SoftwareForm(group=group)
-            data = {'available_languages': languages, 'groupform': groupform, 'assetform': assetform, 'group': group, 'softwareform': softwareform}
+            data = {'available_languages': settings.LANGUAGES, 'groupform': groupform, 'assetform': assetform, 'group': group, 'softwareform': softwareform}
             return render(request, self.template_name, data)
         else:
             return HttpResponseRedirect(request.path_info)
@@ -309,7 +311,7 @@ class AssetProfile(LoginRequiredMixin, View):
             asset = Asset.objects.get(slug=assetslug)
             assetform = AssetForm(instance=asset,user=request.user)
             softwareform = SoftwareForm()
-            data = {'available_languages': languages, 'assetform': assetform, 'softwareform': softwareform, 'asset': asset}
+            data = {'available_languages': settings.LANGUAGES, 'assetform': assetform, 'softwareform': softwareform, 'asset': asset}
             return render(request, self.template_name, data)
         else:
             return HttpResponseRedirect(request.path_info)
@@ -365,7 +367,7 @@ class SoftwareProfile(LoginRequiredMixin, View):
         if group in request.user.extension.groups.all():
             software = Software.objects.get(slug=softwareslug)
             softwareform = SoftwareForm(instance=software,group=group)
-            data = {'available_languages': languages, 'softwareform': softwareform, 'software': software}
+            data = {'available_languages': settings.LANGUAGES, 'softwareform': softwareform, 'software': software}
             return render(request, self.template_name, data)
         else:
             return HttpResponseRedirect(request.path_info)
@@ -398,5 +400,37 @@ class VulnerabilityProfile(LoginRequiredMixin, View):
     def get(self, request, vulnerabilityslug):
         vulnerability = Vulnerability.objects.get(slug=vulnerabilityslug)
         if vulnerability in request.user.extension.getvulnerabilities():
-            data = {'available_languages': languages,'vulnerability': vulnerability}
+            data = {'available_languages': settings.LANGUAGES,'vulnerability': vulnerability}
             return render(request, self.template_name, data)
+
+class Backup(SuperUserRequiredMixin, View):
+    template_name='Backup.html'
+
+    def get(self, request):
+        files = os.listdir('backups')
+        data = {'available_languages': settings.LANGUAGES, 'files' : files}
+        return render(request, self.template_name, data)
+
+    def post(self, request):
+        if "deletebackup" in request.POST:
+            backup_list = request.POST.getlist("backupcheck")
+            for backup in backup_list:
+                os.remove("backups"+os.path.sep+backup)
+            if len(backup_list) > 1:
+                messages.success(request, _("Successfully deleted "+str(len(backup_list))+" backups !"))
+            else:
+                messages.success(request, _("Backup deleted !"))   
+            return HttpResponseRedirect(request.path_info)
+        elif "addbackup" in request.POST:
+            management.call_command('dbbackup')
+            messages.success(request, _("Backup added !"))
+            return HttpResponseRedirect(request.path_info)
+        elif "restorebackup" in request.POST:
+            backup_list = request.POST.getlist("backupcheck")
+            if len(backup_list)>1 or  len(backup_list)==0 :
+                messages.error(request, _("You must select only one backup to restore !"))
+            else :
+                backup_to_restore = backup_list[0]
+                management.call_command('dbrestore','--noinput','-i'+backup_to_restore)
+                messages.success(request, _("Backup restored !"))
+            return HttpResponseRedirect(request.path_info)

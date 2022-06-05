@@ -4,9 +4,8 @@ from django_extensions.db.fields import AutoSlugField
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.conf import settings
 import requests
-
-apikey = '3d50abec-7071-4c24-9de8-fb29fb5b5d39'
 
 class TimeStampMixin(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -53,7 +52,7 @@ class Software(TimeStampMixin):
     def analyse_vulnerabilities(self):
         if self.cpe :
             session = requests.session()
-            params = {'cpeMatchString' : self.cpe.reference, 'apiKey' : apikey}
+            params = {'cpeMatchString' : self.cpe.reference, 'apiKey' : settings.API_KEY}
             response = session.get('https://services.nvd.nist.gov/rest/json/cves/1.0/', params=params)
             cve_items = response.json()["result"]['CVE_Items']
             for cve_item in cve_items:
