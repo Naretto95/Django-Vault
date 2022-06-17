@@ -148,7 +148,8 @@
                 <th scope="col">#</th>
                 {% endif %}
                 <th scope="col">{% trans "name" %}</th>
-                <th scope="col">{% trans "CPE" %}</th>
+                <th scope="col">{% trans "severity" %}</th>
+                <th scope="col">{% trans "score" %}</th>
                 </tr>
             </thead>
             <tbody>
@@ -158,7 +159,8 @@
                 <td>{{vulnerability.pk}}</td>
                 {% endif %}
                 <td class="link"><a href="{% url 'vulnerabilityprofile' vulnerabilityslug=vulnerability.slug %}">{{vulnerability}}</a></td>
-                <td>{{vulnerability.cpe}}</td>
+                <td>{{vulnerability.severity}}</td>
+                <td>{{vulnerability.score}}</td>
                 </tr>
                 {% endfor %}
             </tbody>

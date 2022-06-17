@@ -31,8 +31,8 @@ class Vulnerability(TimeStampMixin):
         self.cpe.vulnerabilities.add(self)
 
 class CPE(TimeStampMixin):
-    name = models.CharField(max_length=100, verbose_name=_('Name'), unique=True)
-    reference = models.TextField(verbose_name=_('Reference'))
+    name = models.CharField(max_length=100, verbose_name=_('Name'))
+    reference = models.TextField(verbose_name=_('Reference'), unique=True)
     vulnerabilities = models.ManyToManyField(Vulnerability, blank=True, verbose_name=_('Vulnerabilities'), related_name='+')
 
     def __str__(self):

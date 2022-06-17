@@ -216,7 +216,7 @@ msgstr "Modifier Actif"
 #: .\templates\GroupProfile.html:72 .\templates\Groups.html:22
 #: .\templates\Groups.html:47 .\templates\SoftwareProfile.html:22
 msgid "Close"
-msgstr "ermer"
+msgstr "Fermer"
 
 #: .\templates\AssetProfile.html:23 .\templates\AssetProfile.html:48
 #: .\templates\AssetProfile.html:112 .\templates\GroupProfile.html:48

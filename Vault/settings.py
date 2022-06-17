@@ -37,7 +37,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'dal',
     'dal_select2',
-    'django.contrib.admin',
+    'Main.apps.AdminSiteConfig',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

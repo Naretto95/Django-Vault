@@ -24,7 +24,6 @@ urlpatterns = [
     path(settings.API_URL, include(group_router.urls)),
     path(settings.API_URL, include(asset_router.urls)),
     path(settings.API_URL, include(software_router.urls)),
-    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('', views.Home.as_view(),name="home"),
     path('groups/', views.Groups.as_view(),name="groups"),
     path('login/', views.Login.as_view(redirect_authenticated_user=True),name="login"),

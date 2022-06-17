@@ -1,13 +1,20 @@
-from django.contrib import admin
+from django.contrib.admin import AdminSite
+from django.urls import path,include
+from django.conf import settings
 from .models import *
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
-admin.site.register(Software)
-admin.site.register(Vulnerability)
-admin.site.register(Group)
-admin.site.register(Asset)
-admin.site.register(Extension)
+class MyAdminSite(AdminSite):
+    site_header = 'Vault Administration'
+    site_title = 'Vault'
+
+admin_site = MyAdminSite()
+admin_site.register(Software)
+admin_site.register(Vulnerability)
+admin_site.register(Group)
+admin_site.register(Asset)
+admin_site.register(Extension)
 
 class CPEResource(resources.ModelResource):
 
@@ -20,4 +27,4 @@ class CPEResource(resources.ModelResource):
 class CPEAdmin(ImportExportModelAdmin):
     resource_class = CPEResource
 
-admin.site.register(CPE,CPEAdmin)
+admin_site.register(CPE,CPEAdmin)
