@@ -14,6 +14,7 @@ from django.shortcuts import redirect
 from rest_framework.decorators import action
 from dal import autocomplete
 from django.core import management
+from django.db.models import Q
 from rest_framework import viewsets,filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
@@ -25,7 +26,7 @@ import os
 
 class CPEAutocomplete(LoginRequiredMixin,autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        qs = CPE.objects.all()
+        qs = CPE.objects.all().order_by('name')
         if self.q:
             qs = qs.filter(name__icontains=self.q)
         return qs
@@ -184,7 +185,7 @@ class Groups(LoginRequiredMixin, View):
                 messages.success(request, _("Group created !"))
                 return HttpResponseRedirect(request.path_info)
             else:
-                messages.error(request, _("Invalid group form !"))
+                messages.warning(request, _("Invalid group form !"))
                 return HttpResponseRedirect(request.path_info)
         elif "deletegroup" in request.POST:
             group_list = request.POST.getlist('groupcheck')
@@ -204,7 +205,7 @@ class Groups(LoginRequiredMixin, View):
                 messages.success(request, _("Asset created !"))
                 return HttpResponseRedirect(request.path_info)
             else:
-                messages.error(request, _("Invalid asset form !"))
+                messages.warning(request, _("Invalid asset form !"))
                 return HttpResponseRedirect(request.path_info)
         elif "deleteasset" in request.POST:
             asset_list = request.POST.getlist('assetcheck')
@@ -217,15 +218,12 @@ class Groups(LoginRequiredMixin, View):
                 messages.success(request, _("Asset deleted !"))
             return HttpResponseRedirect(request.path_info)
 
-class AdminPanel(LoginRequiredMixin, View):
+class AdminPanel(StaffRequiredMixin, View):
     template_name='Admin.html'
 
     def get(self, request):
-        if request.user.is_superuser:
-            data = {'adminnav': True,'available_languages': settings.LANGUAGES}
-            return render(request, self.template_name, data)
-        else:
-            return HttpResponseRedirect('/')
+        data = {'adminnav': True,'available_languages': settings.LANGUAGES}
+        return render(request, self.template_name, data)
 
 class GroupProfile(LoginRequiredMixin, View):
     template_name='GroupProfile.html'
@@ -251,7 +249,7 @@ class GroupProfile(LoginRequiredMixin, View):
                     messages.success(request, _("Group updated !"))
                     return HttpResponseRedirect(request.path_info)
                 else:
-                    messages.error(request, _("Invalid group form !"))
+                    messages.warning(request, _("Invalid group form !"))
                     return HttpResponseRedirect(request.path_info)
             elif "assetform" in request.POST:
                 assetform = AssetForm(request.POST)
@@ -262,7 +260,7 @@ class GroupProfile(LoginRequiredMixin, View):
                     messages.success(request, _("Asset added !"))
                     return HttpResponseRedirect(request.path_info)
                 else:
-                    messages.error(request, _("Invalid asset form !"))
+                    messages.warning(request, _("Invalid asset form !"))
                     return HttpResponseRedirect(request.path_info)
             elif "deleteasset" in request.POST:
                 asset_list = request.POST.getlist('assetcheck')
@@ -285,7 +283,7 @@ class GroupProfile(LoginRequiredMixin, View):
                     messages.success(request, _("Software added !"))
                     return HttpResponseRedirect(request.path_info)
                 else:
-                    messages.error(request, _("Invalid software form !"))
+                    messages.warning(request, _("Invalid software form !"))
                     return HttpResponseRedirect(request.path_info)
             elif "deletesoftware" in request.POST:
                 software_list = request.POST.getlist('softwarecheck')
@@ -327,7 +325,7 @@ class AssetProfile(LoginRequiredMixin, View):
                     messages.success(request, _("Asset updated !"))
                     return HttpResponseRedirect(request.path_info)
                 else:
-                    messages.error(request, _("Invalid asset form !"))
+                    messages.warning(request, _("Invalid asset form !"))
                     return HttpResponseRedirect(request.path_info)
             elif "softwareform" in request.POST:
                 softwareform = SoftwareForm(request.POST)
@@ -338,7 +336,7 @@ class AssetProfile(LoginRequiredMixin, View):
                     messages.success(request, _("Software added !"))
                     return HttpResponseRedirect(request.path_info)
                 else:
-                    messages.error(request, _("Invalid software form !"))
+                    messages.warning(request, _("Invalid software form !"))
                     return HttpResponseRedirect(request.path_info)
             elif "deletesoftware" in request.POST:
                 software_list = request.POST.getlist('softwarecheck')
@@ -383,7 +381,7 @@ class SoftwareProfile(LoginRequiredMixin, View):
                     messages.success(request, _("Software updated !"))
                     return HttpResponseRedirect(request.path_info)
                 else:
-                    messages.error(request, _("Invalid software form !"))
+                    messages.warning(request, _("Invalid software form !"))
                     return HttpResponseRedirect(request.path_info)
             elif "deletesoftware" in request.POST:
                 software.delete()
@@ -403,7 +401,7 @@ class VulnerabilityProfile(LoginRequiredMixin, View):
             data = {'available_languages': settings.LANGUAGES,'vulnerability': vulnerability}
             return render(request, self.template_name, data)
 
-class Backup(SuperUserRequiredMixin, View):
+class Backup(StaffRequiredMixin, View):
     template_name='Backup.html'
 
     def get(self, request):
@@ -428,9 +426,26 @@ class Backup(SuperUserRequiredMixin, View):
         elif "restorebackup" in request.POST:
             backup_list = request.POST.getlist("backupcheck")
             if len(backup_list)>1 or  len(backup_list)==0 :
-                messages.error(request, _("You must select only one backup to restore !"))
+                messages.warning(request, _("You must select only one backup to restore !"))
             else :
                 backup_to_restore = backup_list[0]
                 management.call_command('dbrestore','--noinput','-i'+backup_to_restore)
                 messages.success(request, _("Backup restored !"))
             return HttpResponseRedirect(request.path_info)
+
+class Search(LoginRequiredMixin, View):
+    template_name='Search.html'
+
+    def get(self, request):
+        search = request.GET.get("search")
+        if search:
+            search = request.GET.get("search")
+            groups = request.user.extension.groups.filter(name__icontains=search)
+            vulnerabilities = request.user.extension.getvulnerabilities().filter(Q(name__icontains=search) | Q(created_at__icontains=search) | Q(updated_at__icontains=search))
+            assets = request.user.extension.getassets().filter(Q(name__icontains=search) | Q(created_at__icontains=search) | Q(updated_at__icontains=search))
+            softwares = request.user.extension.getsoftwares().filter(Q(name__icontains=search) | Q(created_at__icontains=search) | Q(updated_at__icontains=search))
+            data = {'available_languages': settings.LANGUAGES, 'groups' : groups, 'vulnerabilities' : vulnerabilities, 'assets' : assets, 'softwares' : softwares}
+            return render(request, self.template_name, data)
+        else :
+            messages.warning(request,_('You need to enter a search term !'))
+            return redirect("home")

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-05 03:16+0200\n"
+"POT-Creation-Date: 2022-06-18 02:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,13 +18,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: .\Main\models.py:19 .\Main\models.py:35 .\Main\models.py:43
-#: .\Main\models.py:79 .\Main\models.py:101
+#: .\Main\mixins.py:13
+msgid ""
+"You do not have the permission required to perform the requested operation."
+msgstr "Vous n'avez pas la permission requise pour ce type de requête."
+
+#: .\Main\models.py:18 .\Main\models.py:34 .\Main\models.py:42
+#: .\Main\models.py:78 .\Main\models.py:100
 msgid "Name"
 msgstr "Nom"
 
-#: .\Main\models.py:20 .\Main\models.py:44 .\Main\models.py:81
-#: .\Main\models.py:102 .\templates\AssetProfile.html:70
+#: .\Main\models.py:19 .\Main\models.py:43 .\Main\models.py:80
+#: .\Main\models.py:101 .\templates\AssetProfile.html:70
 #: .\templates\GroupProfile.html:95 .\templates\SoftwareProfile.html:45
 #: .\templates\VulnerabilityProfile.html:9
 #, fuzzy
@@ -32,112 +37,114 @@ msgstr "Nom"
 msgid "Description"
 msgstr "Description"
 
-#: .\Main\models.py:21 .\templates\VulnerabilityProfile.html:10
+#: .\Main\models.py:20 .\templates\VulnerabilityProfile.html:10
 msgid "Score"
 msgstr ""
 
-#: .\Main\models.py:22 .\templates\VulnerabilityProfile.html:11
+#: .\Main\models.py:21 .\templates\VulnerabilityProfile.html:11
 msgid "Severity"
 msgstr "Sévérité"
 
-#: .\Main\models.py:23 .\templates\VulnerabilityProfile.html:12
+#: .\Main\models.py:22 .\templates\VulnerabilityProfile.html:12
 msgid "Link"
 msgstr "Lien"
 
-#: .\Main\models.py:24 .\Main\models.py:46 .\templates\AssetProfile.html:151
-#: .\templates\GroupProfile.html:225
+#: .\Main\models.py:23 .\Main\models.py:45
 msgid "CPE"
 msgstr ""
 
-#: .\Main\models.py:25 .\Main\models.py:48 .\Main\models.py:83
-#: .\Main\models.py:104
+#: .\Main\models.py:24 .\Main\models.py:47 .\Main\models.py:82
+#: .\Main\models.py:103
 msgid "Slug"
 msgstr ""
 
-#: .\Main\models.py:36
+#: .\Main\models.py:35
 msgid "Reference"
 msgstr "Référence"
 
-#: .\Main\models.py:37 .\templates\AssetProfile.html:89
+#: .\Main\models.py:36 .\templates\AssetProfile.html:89
 #: .\templates\AssetProfile.html:102 .\templates\AssetProfile.html:142
 #: .\templates\GroupProfile.html:124 .\templates\GroupProfile.html:138
 #: .\templates\GroupProfile.html:216 .\templates\Home.html:35
+#: .\templates\Search.html:8 .\templates\Search.html:76
 #: .\templates\SoftwareProfile.html:52
 msgid "Vulnerabilities"
 msgstr "Vulnérabilités"
 
-#: .\Main\models.py:45
+#: .\Main\models.py:44
 msgid "Version"
 msgstr ""
 
-#: .\Main\models.py:47 .\templates\Home.html:72
+#: .\Main\models.py:46 .\templates\Home.html:72
 msgid "Asset"
 msgstr "Actif"
 
-#: .\Main\models.py:80 .\templates\Home.html:63
+#: .\Main\models.py:79 .\templates\Home.html:63
 msgid "Group"
 msgstr "Groupe"
 
-#: .\Main\models.py:82 .\templates\AssetProfile.html:79
+#: .\Main\models.py:81 .\templates\AssetProfile.html:79
 #: .\templates\AssetProfile.html:101 .\templates\AssetProfile.html:108
 #: .\templates\GroupProfile.html:114 .\templates\GroupProfile.html:137
 #: .\templates\GroupProfile.html:180 .\templates\Home.html:27
+#: .\templates\Search.html:7 .\templates\Search.html:105
 msgid "Softwares"
 msgstr ""
 
-#: .\Main\models.py:100
+#: .\Main\models.py:99
 msgid "Extension"
 msgstr ""
 
-#: .\Main\models.py:103 .\templates\GroupProfile.html:104
+#: .\Main\models.py:102 .\templates\GroupProfile.html:104
 #: .\templates\GroupProfile.html:136 .\templates\GroupProfile.html:144
 #: .\templates\Groups.html:58 .\templates\Groups.html:98
-#: .\templates\Home.html:19
+#: .\templates\Home.html:19 .\templates\Search.html:6
+#: .\templates\Search.html:43
 msgid "Assets"
 msgstr "Actifs"
 
-#: .\Main\models.py:125
+#: .\Main\models.py:124
 msgid "Group(s)"
 msgstr "Groupe(s)"
 
-#: .\Main\views.py:52
+#: .\Main\views.py:55
 msgid "Group analysed!"
 msgstr "Groupe analysé !"
 
-#: .\Main\views.py:83
+#: .\Main\views.py:86
 msgid "Asset analysed!"
 msgstr "Actif analysé !"
 
-#: .\Main\views.py:114
+#: .\Main\views.py:117
 msgid "Software analysed!"
 msgstr "Logiciel analysé !"
 
-#: .\Main\views.py:182
+#: .\Main\views.py:185
 msgid "Group created !"
 msgstr "Groupe créée !"
 
-#: .\Main\views.py:185 .\Main\views.py:252
+#: .\Main\views.py:188 .\Main\views.py:252
 msgid "Invalid group form !"
 msgstr "Formulaire du groupe invalide !"
 
-#: .\Main\views.py:193 .\Main\views.py:213 .\Main\views.py:271
-#: .\Main\views.py:294 .\Main\views.py:347
+#: .\Main\views.py:196 .\Main\views.py:216 .\Main\views.py:271
+#: .\Main\views.py:294 .\Main\views.py:347 .\Main\views.py:418
 msgid "Successfully deleted "
 msgstr "supprimé"
 
-#: .\Main\views.py:195 .\Main\views.py:277
+#: .\Main\views.py:198 .\Main\views.py:277
 msgid "Group deleted !"
 msgstr "Groupe supprimé !"
 
-#: .\Main\views.py:202
+#: .\Main\views.py:205
 msgid "Asset created !"
 msgstr "Actif créée !"
 
-#: .\Main\views.py:205 .\Main\views.py:263 .\Main\views.py:328
+#: .\Main\views.py:208 .\Main\views.py:263 .\Main\views.py:328
 msgid "Invalid asset form !"
 msgstr "Formulaire d'actif invalide !"
 
-#: .\Main\views.py:215 .\Main\views.py:273 .\Main\views.py:353
+#: .\Main\views.py:218 .\Main\views.py:273 .\Main\views.py:353
 msgid "Asset deleted !"
 msgstr "Actif supprimé !"
 
@@ -181,6 +188,40 @@ msgstr ""
 msgid "Software analysed !"
 msgstr "Logiciel analysé !"
 
+#: .\Main\views.py:420
+#, fuzzy
+#| msgid "Group deleted !"
+msgid "Backup deleted !"
+msgstr "Groupe supprimé !"
+
+#: .\Main\views.py:424
+#, fuzzy
+#| msgid "Software added !"
+msgid "Backup added !"
+msgstr "Logiciel ajouté !"
+
+#: .\Main\views.py:429
+msgid "You must select only one backup to restore !"
+msgstr "Veuillez selectionner un seul backup à restorer !"
+
+#: .\Main\views.py:433
+#, fuzzy
+#| msgid "Group created !"
+msgid "Backup restored !"
+msgstr "Groupe créée !"
+
+#: .\Main\views.py:450
+msgid "You need to enter a search term !"
+msgstr "Terme de recherche nécessaire !"
+
+#: .\Vault\settings.py:157
+msgid "English"
+msgstr "Anglais"
+
+#: .\Vault\settings.py:158
+msgid "French"
+msgstr "Français"
+
 #: .\templates\Admin.html:8
 msgid "Django Admin Panel"
 msgstr "Panneau d'administration Django"
@@ -219,11 +260,12 @@ msgid "Close"
 msgstr "Fermer"
 
 #: .\templates\AssetProfile.html:23 .\templates\AssetProfile.html:48
-#: .\templates\AssetProfile.html:112 .\templates\GroupProfile.html:48
-#: .\templates\GroupProfile.html:73 .\templates\GroupProfile.html:148
-#: .\templates\GroupProfile.html:184 .\templates\Groups.html:23
-#: .\templates\Groups.html:48 .\templates\Groups.html:68
-#: .\templates\Groups.html:102 .\templates\SoftwareProfile.html:23
+#: .\templates\AssetProfile.html:112 .\templates\Backup.html:9
+#: .\templates\GroupProfile.html:48 .\templates\GroupProfile.html:73
+#: .\templates\GroupProfile.html:148 .\templates\GroupProfile.html:184
+#: .\templates\Groups.html:23 .\templates\Groups.html:48
+#: .\templates\Groups.html:68 .\templates\Groups.html:102
+#: .\templates\SoftwareProfile.html:23
 msgid "Add"
 msgstr "Ajouter"
 
@@ -233,16 +275,18 @@ msgid "Add Software"
 msgstr "Ajouter Logiciel"
 
 #: .\templates\AssetProfile.html:61 .\templates\AssetProfile.html:113
-#: .\templates\GroupProfile.html:86 .\templates\GroupProfile.html:149
-#: .\templates\GroupProfile.html:185 .\templates\Groups.html:69
-#: .\templates\Groups.html:103 .\templates\SoftwareProfile.html:36
+#: .\templates\Backup.html:10 .\templates\GroupProfile.html:86
+#: .\templates\GroupProfile.html:149 .\templates\GroupProfile.html:185
+#: .\templates\Groups.html:69 .\templates\Groups.html:103
+#: .\templates\SoftwareProfile.html:36
 msgid "Are you sure?"
 msgstr "êtes-vous sûr?"
 
 #: .\templates\AssetProfile.html:61 .\templates\AssetProfile.html:113
-#: .\templates\GroupProfile.html:86 .\templates\GroupProfile.html:149
-#: .\templates\GroupProfile.html:185 .\templates\Groups.html:69
-#: .\templates\Groups.html:103 .\templates\SoftwareProfile.html:36
+#: .\templates\Backup.html:10 .\templates\GroupProfile.html:86
+#: .\templates\GroupProfile.html:149 .\templates\GroupProfile.html:185
+#: .\templates\Groups.html:69 .\templates\Groups.html:103
+#: .\templates\SoftwareProfile.html:36
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -262,17 +306,42 @@ msgid "Details"
 msgstr "Détails"
 
 #: .\templates\AssetProfile.html:121 .\templates\AssetProfile.html:150
-#: .\templates\GroupProfile.html:157 .\templates\GroupProfile.html:193
-#: .\templates\GroupProfile.html:224 .\templates\Groups.html:77
-#: .\templates\Groups.html:111 .\templates\Home.html:52
-#: .\templates\SoftwareProfile.html:60
+#: .\templates\Backup.html:15 .\templates\GroupProfile.html:157
+#: .\templates\GroupProfile.html:193 .\templates\GroupProfile.html:224
+#: .\templates\Groups.html:77 .\templates\Groups.html:111
+#: .\templates\Home.html:52 .\templates\Search.html:23
+#: .\templates\Search.html:52 .\templates\Search.html:84
+#: .\templates\Search.html:114 .\templates\SoftwareProfile.html:60
 msgid "name"
 msgstr "nom"
 
 #: .\templates\AssetProfile.html:122 .\templates\GroupProfile.html:159
 #: .\templates\GroupProfile.html:195 .\templates\Groups.html:114
+#: .\templates\Search.html:55 .\templates\Search.html:115
 msgid "vulnerabilities"
 msgstr "vulnérabilités"
+
+#: .\templates\AssetProfile.html:151 .\templates\GroupProfile.html:225
+#: .\templates\Search.html:85 .\templates\SoftwareProfile.html:61
+#, fuzzy
+#| msgid "Severity"
+msgid "severity"
+msgstr "Sévérité"
+
+#: .\templates\AssetProfile.html:152 .\templates\GroupProfile.html:226
+#: .\templates\Search.html:86 .\templates\SoftwareProfile.html:62
+msgid "score"
+msgstr ""
+
+#: .\templates\Backup.html:6
+#, fuzzy
+#| msgid "Database Backups"
+msgid "Backups"
+msgstr "Sauvegardes base de donnée"
+
+#: .\templates\Backup.html:8
+msgid "Restore"
+msgstr "Restaurer"
 
 #: .\templates\Base.html:27 .\templates\Base.html:54
 msgid "Menu"
@@ -366,6 +435,7 @@ msgid "Add Asset"
 msgstr "Ajouter Actif"
 
 #: .\templates\GroupProfile.html:158 .\templates\Groups.html:113
+#: .\templates\Search.html:54
 msgid "softwares"
 msgstr "logiciels"
 
@@ -378,15 +448,16 @@ msgid "Add Group"
 msgstr "Ajouter Groupe"
 
 #: .\templates\Groups.html:57 .\templates\Groups.html:64
-#: .\templates\Home.html:11
+#: .\templates\Home.html:11 .\templates\Search.html:5
+#: .\templates\Search.html:14
 msgid "Groups"
 msgstr "Groupes"
 
-#: .\templates\Groups.html:78
+#: .\templates\Groups.html:78 .\templates\Search.html:24
 msgid "assets"
 msgstr "actifs"
 
-#: .\templates\Groups.html:112
+#: .\templates\Groups.html:112 .\templates\Search.html:53
 msgid "group"
 msgstr "group"
 

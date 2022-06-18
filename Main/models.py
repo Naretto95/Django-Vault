@@ -24,7 +24,7 @@ class Vulnerability(TimeStampMixin):
     slug = AutoSlugField(_('Slug'), unique=True, max_length=100, populate_from=('name'))
 
     def __str__(self):
-        return self.name
+        return str(self.cpe) + " " + self.name
 
     def save(self, *args, **kwargs):
         super(Vulnerability,self).save(*args, **kwargs)

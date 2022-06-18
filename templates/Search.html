@@ -1,0 +1,133 @@
+{% extends "Base.html" %}
+{% load i18n %}
+{% block content %}
+<ul class="nav nav-tabs">
+  <li><a data-toggle="tab"  href="#groups" class="nav-link active" role="tab">{% trans "Groups" %}</a></li>
+  <li><a data-toggle="tab" href="#assets" class="nav-link" role="tab">{% trans "Assets" %}</a></li>
+  <li><a data-toggle="tab" href="#softwares" class="nav-link" role="tab">{% trans "Softwares" %}</a></li>
+  <li><a data-toggle="tab" href="#vulnerabilities" class="nav-link" role="tab">{% trans "Vulnerabilities" %}</a></li>
+</ul>
+
+<div class="tab-content">
+  <div id="groups" class="tab-pane active">
+    <br>
+    <h3>{% trans "Groups" %}</h3>
+    <br>
+    <table class="table display table-striped table-bordered">
+        <thead>
+        <tr>
+            <th scope="col"></th>
+            {% if request.user.is_staff %}
+            <th scope="col">#</th>
+            {% endif %}
+            <th scope="col">{% trans "name" %}</th>
+            <th scope="col">{% trans "assets" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for group in groups %}
+        <tr>
+            <td style="text-align:center"><input name="groupcheck" value="{{group.pk}}" type="checkbox"></td>
+            {% if request.user.is_staff %}
+            <td>{{group.pk}}</td>
+            {% endif %}
+            <td class="link"><a href="{% url 'groupprofile' groupslug=group.slug %}">{{group}}</a></td>
+            <td>{{group.assets.count}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+  </div>
+  <div id="assets" class="tab-pane">
+    <br>
+    <h3>{% trans "Assets" %}</h3>
+    <br>
+    <table class="table display table-striped table-bordered">
+        <thead>
+        <tr>
+            <th scope="col"></th>
+            {% if request.user.is_staff %}
+            <th scope="col">#</th>
+            {% endif %}
+            <th scope="col">{% trans "name" %}</th>
+            <th scope="col">{% trans "group" %}</th>
+            <th scope="col">{% trans "softwares" %}</th>
+            <th scope="col">{% trans "vulnerabilities" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for asset in assets %}
+        <tr>
+            <td style="text-align:center"><input name="assetcheck" value="{{asset.pk}}" type="checkbox"></td>
+            {% if request.user.is_staff %}
+            <td>{{asset.pk}}</td>
+            {% endif %}
+            <td class="link"><a href="{% url 'assetprofile' groupslug=asset.group.slug assetslug=asset.slug %}">{{asset}}</a></td>
+            <td class="link"><a href="{% url 'groupprofile' groupslug=asset.group.slug %}">{{asset.group}}</a></td>
+            <td>{{asset.softwares.count}}</td>
+            <td>{{asset.getvulnerabilities.count}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+  </div>
+  <div id="vulnerabilities" class="tab-pane">
+    <br>
+    <h3>{% trans "Vulnerabilities" %}</h3>
+    <br>
+    <table class="table display table-striped table-bordered">
+        <thead>
+            <tr>
+            {% if request.user.is_staff %}
+            <th scope="col">#</th>
+            {% endif %}
+            <th scope="col">{% trans "name" %}</th>
+            <th scope="col">{% trans "severity" %}</th>
+            <th scope="col">{% trans "score" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vulnerability in vulnerabilities %}
+            <tr>
+            {% if request.user.is_staff %}
+            <td>{{vulnerability.pk}}</td>
+            {% endif %}
+            <td class="link"><a href="{% url 'vulnerabilityprofile' vulnerabilityslug=vulnerability.slug %}">{{vulnerability}}</a></td>
+            <td>{{vulnerability.severity}}</td>
+            <td>{{vulnerability.score}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
+  <div id="softwares" class="tab-pane">
+    <br>
+    <h3>{% trans "Softwares" %}</h3>
+    <br>
+    <table class="table display table-striped table-bordered">
+        <thead>
+            <tr>
+            <th scope="col"></th>
+            {% if request.user.is_staff %}
+            <th scope="col">#</th>
+            {% endif %}
+            <th scope="col">{% trans "name" %}</th>
+            <th scope="col">{% trans "vulnerabilities" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for software in softwares %}
+            <tr>
+            <td style="text-align:center"><input name="softwarecheck" value="{{software.pk}}" type="checkbox"></td>
+            {% if request.user.is_staff %}
+            <td>{{software.pk}}</td>
+            {% endif %}
+            <td class="link"><a href="{% url 'softwareprofile' groupslug=software.asset.group.slug assetslug=software.asset.slug softwareslug=software.slug %}">{{software}}</a></td>
+            <td>{{software.getvulnerabilities.count}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -5,12 +5,11 @@ from django.shortcuts import redirect
 from django.conf import settings
 from django.utils.translation import gettext as _
 
-class SuperUserRequiredMixin(object):
+class StaffRequiredMixin(object):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_superuser:
-            messages.error(request,_('You do not have the permission required to perform the requested operation.'))
+        if not request.user.is_staff:
+            messages.warning(request,_('You do not have the permission required to perform the requested operation.'))
             return redirect(settings.LOGIN_URL)
-        return super(SuperUserRequiredMixin, self).dispatch(request,
-            *args, **kwargs)
+        return super(StaffRequiredMixin, self).dispatch(request,*args, **kwargs)

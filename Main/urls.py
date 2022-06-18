@@ -27,7 +27,7 @@ urlpatterns = [
     path('', views.Home.as_view(),name="home"),
     path('groups/', views.Groups.as_view(),name="groups"),
     path('login/', views.Login.as_view(redirect_authenticated_user=True),name="login"),
-    path('search/', views.Login.as_view(redirect_authenticated_user=True),name="search"),
+    path('search/', views.Search.as_view(),name="search"),
     path('adminpanel/', views.AdminPanel.as_view(),name="adminpanel"),
     path('adminpanel/backup/', views.Backup.as_view(),name="backup"),
     path('signup/', views.SignUp.as_view(),name="signup"),
