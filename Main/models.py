@@ -47,7 +47,8 @@ class Software(TimeStampMixin):
     slug = AutoSlugField(_('Slug'), unique=True, max_length=100, populate_from=('name','version','asset'))
 
     def getvulnerabilities(self):
-        return self.cpe.vulnerabilities.all()
+        return self.cpe.vulnerabilities.all() if self.cpe else Vulnerability.objects.none()
+        
 
     def analyse_vulnerabilities(self):
         if self.cpe :

@@ -204,7 +204,7 @@
                 {% endif %}
                 <td class="link"><a href="{% url 'softwareprofile' groupslug=software.asset.group.slug assetslug=software.asset.slug softwareslug=software.slug %}">{{software}}</a></td>
                 <td class="link"><a href="{% url 'assetprofile' groupslug=software.asset.group.slug assetslug=software.asset.slug %}">{{software.asset}}</a></td>
-                <td>{{software.cpe.vulnerabilities.count}}</td>
+                <td>{{software.getvulnerabilities.count}}</td>
                 </tr>
                 {% endfor %}
             </tbody>

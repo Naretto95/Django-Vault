@@ -58,6 +58,8 @@ DBBACKUP_STORAGE_OPTIONS = {
     'location': os.path.join(BASE_DIR, 'backups')
 }
 
+TMP = os.path.join(BASE_DIR, 'tmp')
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

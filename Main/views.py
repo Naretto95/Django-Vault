@@ -48,7 +48,7 @@ class GroupsViewSet(LoginRequiredMixin,viewsets.ModelViewSet):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['post'])
     def analyse_vulnerabilities(self, request, slug):
         group = self.get_object()
         group.analyse_vulnerabilities()
@@ -57,7 +57,7 @@ class GroupsViewSet(LoginRequiredMixin,viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ['list','retrieve','create']:
             self.permission_classes = [IsAuthenticated,]
-        elif self.action in ['update', 'partial_update','destroy']:
+        elif self.action in ['update', 'partial_update','destroy','analyse_vulnerabilities']:
             self.permission_classes = [IsGroupOwner,]
         return super().get_permissions()
 
@@ -79,7 +79,7 @@ class AssetsViewSet(LoginRequiredMixin,viewsets.ModelViewSet):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['post'])
     def analyse_vulnerabilities(self, request, group_slug, slug):
         asset = self.get_object()
         asset.analyse_vulnerabilities()
@@ -88,7 +88,7 @@ class AssetsViewSet(LoginRequiredMixin,viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ['list','retrieve','create']:
             self.permission_classes = [IsGroupOwner,]
-        elif self.action in ['update', 'partial_update','destroy']:
+        elif self.action in ['update', 'partial_update','destroy','analyse_vulnerabilities']:
             self.permission_classes = [IsAssetOwner,]
         return super().get_permissions()
 
@@ -110,7 +110,7 @@ class SoftwareViewSet(LoginRequiredMixin,viewsets.ModelViewSet):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['post'])
     def analyse_vulnerabilities(self, request, group_slug, asset_slug, slug):
         software = self.get_object()
         software.analyse_vulnerabilities()
@@ -119,7 +119,7 @@ class SoftwareViewSet(LoginRequiredMixin,viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ['list','retrieve','create']:
             self.permission_classes = [IsAssetOwner,]
-        elif self.action in ['update', 'partial_update','destroy']:
+        elif self.action in ['update', 'partial_update','destroy','analyse_vulnerabilities']:
             self.permission_classes = [IsSoftwareOwner,]
         return super().get_permissions()
 
