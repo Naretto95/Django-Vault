@@ -20,7 +20,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                <button type="submit" class="btn btn-primary" name="assetform">{% trans "Add" %}</button>
+                <button type="submit" class="btn btn-primary" name="assetform">{% trans "Save" %}</button>
                 </form>
             </div>
         </div>
@@ -52,10 +52,10 @@
   
     </div>
 </div>
-<a class ="link" href="{% url 'groups' %}">Groups</a> > <a class ="link" href="{% url 'groupprofile' groupslug=asset.group.slug %}">{{asset.group}}</a> > {{asset}} 
+<a class ="link" href="{% url 'groups' %}">Groups</a> > <a class ="link" href="{% url 'groupprofile' groupslug=asset.group.slug %}">{{asset.group}}</a> > {{asset.name}} 
 <br>
 <br>
-<h2>{{asset}}</h2>
+<h2>{{asset.name}}</h2>
 <form method="POST" >
     {% csrf_token %}
     <button type="submit" class="btn btn-danger" name="deleteasset" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
@@ -129,7 +129,7 @@
                 {% if request.user.is_staff %}
                 <td>{{software.pk}}</td>
                 {% endif %}
-                <td class="link"><a href="{% url 'softwareprofile' groupslug=software.asset.group.slug assetslug=software.asset.slug softwareslug=software.slug %}">{{software}}</a></td>
+                <td class="link"><a href="{% url 'softwareprofile' groupslug=software.asset.group.slug assetslug=software.asset.slug softwareslug=software.slug %}">{{software.name}} {{software.version}}</a></td>
                 <td>{{software.getvulnerabilities.count}}</td>
                 </tr>
                 {% endfor %}

@@ -319,11 +319,11 @@ class AssetProfile(LoginRequiredMixin, View):
         if group in request.user.extension.groups.all():
             asset = Asset.objects.get(slug=assetslug)
             if "assetform" in request.POST:
-                assetform = AssetForm(request.POST, instance=asset)
+                assetform = AssetForm(request.POST, instance=asset,user=request.user)
                 if assetform.is_valid():
                     asset_update = assetform.save()
                     messages.success(request, _("Asset updated !"))
-                    return HttpResponseRedirect(request.path_info)
+                    return redirect('assetprofile', groupslug=groupslug, assetslug=asset_update.slug)
                 else:
                     messages.warning(request, _("Invalid asset form !"))
                     return HttpResponseRedirect(request.path_info)
@@ -375,11 +375,11 @@ class SoftwareProfile(LoginRequiredMixin, View):
         if group in request.user.extension.groups.all():
             software = Software.objects.get(slug=softwareslug)
             if "softwareform" in request.POST:
-                softwareform = SoftwareForm(request.POST, instance=software)
+                softwareform = SoftwareForm(request.POST, instance=software, group=group)
                 if softwareform.is_valid():
                     software_update = softwareform.save()
                     messages.success(request, _("Software updated !"))
-                    return HttpResponseRedirect(request.path_info)
+                    return redirect('softwareprofile', groupslug=groupslug, assetslug=assetslug, softwareslug=software_update.slug)
                 else:
                     messages.warning(request, _("Invalid software form !"))
                     return HttpResponseRedirect(request.path_info)

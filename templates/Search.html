@@ -62,7 +62,7 @@
             {% if request.user.is_staff %}
             <td>{{asset.pk}}</td>
             {% endif %}
-            <td class="link"><a href="{% url 'assetprofile' groupslug=asset.group.slug assetslug=asset.slug %}">{{asset}}</a></td>
+            <td class="link"><a href="{% url 'assetprofile' groupslug=asset.group.slug assetslug=asset.slug %}">{{asset.name}}</a></td>
             <td class="link"><a href="{% url 'groupprofile' groupslug=asset.group.slug %}">{{asset.group}}</a></td>
             <td>{{asset.softwares.count}}</td>
             <td>{{asset.getvulnerabilities.count}}</td>
@@ -122,7 +122,7 @@
             {% if request.user.is_staff %}
             <td>{{software.pk}}</td>
             {% endif %}
-            <td class="link"><a href="{% url 'softwareprofile' groupslug=software.asset.group.slug assetslug=software.asset.slug softwareslug=software.slug %}">{{software}}</a></td>
+            <td class="link"><a href="{% url 'softwareprofile' groupslug=software.asset.group.slug assetslug=software.asset.slug softwareslug=software.slug %}">{{software.name}} {{software.version}}</a></td>
             <td>{{software.getvulnerabilities.count}}</td>
             </tr>
             {% endfor %}

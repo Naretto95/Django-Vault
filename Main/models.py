@@ -1,10 +1,11 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django_extensions.db.fields import AutoSlugField
+from autoslug import AutoSlugField
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
+from model_utils import FieldTracker
 import requests
 
 class TimeStampMixin(models.Model):
@@ -21,7 +22,7 @@ class Vulnerability(TimeStampMixin):
     severity = models.CharField(max_length=100,verbose_name=_('Severity'))
     link = models.URLField(verbose_name=_('Link'))
     cpe = models.ForeignKey('CPE', on_delete=models.CASCADE,verbose_name=_('CPE'), related_name='+')
-    slug = AutoSlugField(_('Slug'), unique=True, max_length=100, populate_from=('name'))
+    slug = AutoSlugField(_('Slug'), unique=True, max_length=100, populate_from='__str__',always_update=True)
 
     def __str__(self):
         return str(self.cpe) + " " + self.name
@@ -44,11 +45,11 @@ class Software(TimeStampMixin):
     version = models.CharField(max_length=100,verbose_name=_('Version'))
     cpe = models.ForeignKey('CPE', blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_('CPE'))
     asset = models.ForeignKey('Asset', on_delete=models.CASCADE,verbose_name=_('Asset'), related_name='+')
-    slug = AutoSlugField(_('Slug'), unique=True, max_length=100, populate_from=('name','version','asset'))
+    slug = AutoSlugField(_('Slug'), unique=True, max_length=100, populate_from='__str__', always_update=True)
+    tracker = FieldTracker(fields=['asset'])
 
     def getvulnerabilities(self):
         return self.cpe.vulnerabilities.all() if self.cpe else Vulnerability.objects.none()
-        
 
     def analyse_vulnerabilities(self):
         if self.cpe :
@@ -69,9 +70,12 @@ class Software(TimeStampMixin):
                 Vulnerability.objects.get_or_create(name=name, description=description, score=score, severity=severity, link=link, cpe=self.cpe)
 
     def __str__(self):
-        return self.name
+        return self.name + " " + self.version + " " + str(self.asset.name)
 
     def save(self, *args, **kwargs):
+        if self.tracker.changed() :
+            asset = Asset.objects.get(id=self.tracker.previous('asset'))
+            asset.softwares.remove(self)
         super(Software,self).save(*args, **kwargs)
         self.asset.softwares.add(self)
 
@@ -80,7 +84,8 @@ class Asset(TimeStampMixin):
     group = models.ForeignKey('Group', on_delete=models.CASCADE,verbose_name=_('Group'), related_name='+')
     description = models.TextField(verbose_name=_('Description'))
     softwares = models.ManyToManyField(Software, blank=True, verbose_name=_('Softwares'), related_name='+')
-    slug = AutoSlugField(_('Slug'), unique=True, max_length=100, populate_from=('name','group'))
+    slug = AutoSlugField(_('Slug'), max_length=100, unique=True, populate_from='__str__', always_update=True)
+    tracker = FieldTracker(fields=['group'])
 
     def getvulnerabilities(self):
         return Vulnerability.objects.filter(cpe__in=self.softwares.values_list('cpe',flat=True))
@@ -90,9 +95,12 @@ class Asset(TimeStampMixin):
             software.analyse_vulnerabilities()
 
     def __str__(self):
-        return self.name
+        return self.name + " " + str(self.group)
 
     def save(self, *args, **kwargs):
+        if self.tracker.changed() :
+            group = Group.objects.get(id=self.tracker.previous('group'))
+            group.assets.remove(self)
         super(Asset,self).save(*args, **kwargs)
         self.group.assets.add(self)
 
@@ -101,7 +109,7 @@ class Group(TimeStampMixin):
     name = models.CharField(max_length=100, verbose_name=_('Name'))
     description = models.TextField(verbose_name=_('Description'))
     assets = models.ManyToManyField(Asset, blank=True, verbose_name=_('Assets'), related_name='+')
-    slug = AutoSlugField(_('Slug'), unique=True, max_length=100, populate_from=('name'))
+    slug = AutoSlugField(_('Slug'), unique=True, max_length=100, populate_from='__str__', always_update=True)
 
     def getsoftwares(self):
         return Software.objects.filter(asset__in=self.assets.all())

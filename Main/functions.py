@@ -20,14 +20,17 @@ def get_random_obj_from_queryset(queryset):
 def testdb():
     user = User.objects.get(username="admin")
     extension = Extension.objects.get(user=user)
+    print("Deleting previous objects...")
+    Group.objects.all().delete()
+    Asset.objects.all().delete()
     print("Creating objects...")
     for i in tqdm(range(30)):
-        group = Group.objects.get_or_create(extension=extension, name="Group"+str(i), description="Description of group"+str(i))[0]
+        group = Group.objects.create(extension=extension, name="Group"+str(i), description="Description of group"+str(i))
         for j in range(10):
-            asset = Asset.objects.get_or_create(group=group, name="Asset"+str(j), description="Description of asset"+str(j))[0]
+            asset = Asset.objects.create(group=group, name="Asset"+str(j), description="Description of asset"+str(j))
             for k in range(10):
                 cpe = get_random_obj_from_queryset(CPE.objects.all())
-                Software.objects.get_or_create(asset=asset, name="Software"+str(k), description="Description of software"+str(k), version="1.0.0", cpe=cpe)
+                Software.objects.create(asset=asset, name="Software"+str(k), description="Description of software"+str(k), version="1.0.0", cpe=cpe)
 
 def populatecpedb():
     NVD_CPE_URL = ("https://nvd.nist.gov/feeds/xml/cpe/dictionary/official-cpe-dictionary_v2.3.xml.gz")

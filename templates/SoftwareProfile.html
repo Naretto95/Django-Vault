@@ -8,7 +8,7 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">{% trans "Add Software" %}</h4>
+                <h4 class="modal-title">{% trans "Edit Software" %}</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -20,17 +20,17 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                <button type="submit" class="btn btn-primary" name="softwareform">{% trans "Add" %}</button>
+                <button type="submit" class="btn btn-primary" name="softwareform">{% trans "Save" %}</button>
                 </form>
             </div>
         </div>
   
     </div>
 </div>
-<a class ="link" href="{% url 'groups' %}">Groups</a> > <a class ="link" href="{% url 'groupprofile' groupslug=software.asset.group.slug %}">{{software.asset.group}}</a> > <a class ="link" href="{% url 'assetprofile' groupslug=software.asset.group.slug assetslug=software.asset.slug %}">{{software.asset}}</a> > {{software}}
+<a class ="link" href="{% url 'groups' %}">Groups</a> > <a class ="link" href="{% url 'groupprofile' groupslug=software.asset.group.slug %}">{{software.asset.group}}</a> > <a class ="link" href="{% url 'assetprofile' groupslug=software.asset.group.slug assetslug=software.asset.slug %}">{{software.asset.name}}</a> > {{software.name}} {{software.version}}
 <br>
 <br>
-<h2>{{software}}</h2>
+<h2>{{software.name}} {{software.version}}</h2>
 <form method="POST" >
     {% csrf_token %}
     <button type="submit" class="btn btn-danger" name="deletesoftware" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
